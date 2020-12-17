@@ -36,11 +36,11 @@ export default {
   flex: 1;
   padding: 0 35px;
   .active {
-    color: #fff;
-    font-weight: 500;
     // width: 40px;
-    text-align: center;
     padding-bottom: 2px;
+    font-weight: 500;
+    text-align: center;
+    color: #fff;
     border-bottom: 2px solid #fff;
   }
   // .active span{

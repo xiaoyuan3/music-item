@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 const Recommend = () => import('../views/recommend/Recommend')
-const Row = () => import('../views/row/Row')
+const Rank = () => import('../views/rank/Rank')
 const Singer = () => import('../views/singer/Singer')
 // 使用组件
 Vue.use(VueRouter);
@@ -18,8 +18,8 @@ const routes = [
     component:Recommend
   },
   {
-    path:'/row',
-    component: Row
+    path:'/rank',
+    component: Rank
   },
   {
     path: '/singer',

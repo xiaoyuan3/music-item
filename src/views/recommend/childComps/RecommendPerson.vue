@@ -5,8 +5,7 @@
       <div v-for="(item, index) in result" :key="index" class="item-d">
         <a href="">
           <img :src="item.picUrl" alt="" />
-          <span>
-            {{(item.playCount/10000).toFixed(1)}}万</span>
+          <span>{{ (item.playCount / 10000).toFixed(1) }}万</span>
           <p>{{ item.name }}</p>
         </a>
       </div>
@@ -39,14 +38,13 @@ export default {
   display: flex;
   // flex-wrap: wrap;
   flex-flow: row wrap;
-  // justify-content: space-around;
   // margin-left: 3px;
+  // justify-content: space-between;
   width: 100%;
   .item-d {
     flex: 1;
     position: relative;
     width: 100%;
-    // justify-content: space-between;
     margin: 8px 0;
     text-align: left;
     a {
@@ -57,7 +55,7 @@ export default {
         height: 120px;
         border-radius: 3px;
       }
-      span{
+      span {
         position: absolute;
         background: url(~assets/image/RecommendPersonImage/ej.svg);
         // 指定背景图像的大小
@@ -66,19 +64,24 @@ export default {
         background-repeat: no-repeat;
         margin: 2px 0;
         // 定位背景图像
-        background-position:0;
+        background-position: 0;
         padding-left: 13px;
         right: 5px;
         font-size: 12px;
         color: #fff;
       }
       p {
+        // 显示两行多的用省略号代替 前5行代码
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         width: 100px;
-        color: #6d6d6f;
-        font-size: 12px;
         margin: 0;
+        font-size: 12px;
         text-align: left;
-        display: inline-block;
+        color: #6d6d6f;
       }
     }
   }

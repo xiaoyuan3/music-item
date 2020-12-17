@@ -4,35 +4,39 @@
     <tab-bar-item path="/recommend" class="left">
       <div slot="item-text">推荐</div>
     </tab-bar-item>
-    <tab-bar-item path="/row" class="center">
+    <tab-bar-item path="/rank" class="center">
       <div slot="item-text">排行</div>
     </tab-bar-item>
     <tab-bar-item path="/singer" class="right">
       <div slot="item-text">歌手</div>
     </tab-bar-item>
-  </div>  
+  </div>
 </template>
 
 <script>
-import TabBar from './TabBarItem' 
-import TabBarItem from './TabBarItem.vue'
+import TabBar from "./TabBarItem";
+import TabBarItem from "./TabBarItem.vue";
 
 export default {
   components: { TabBarItem },
-  name:"TabBar",
+  name: "TabBar",
   componentes: {
-    TabBarItem
-  }
-}
+    TabBarItem,
+  },
+};
 </script>
 
 <style lang="less" scoped>
-.tab-bar{
+.tab-bar {
+  position: fixed;
   display: flex;
+  top: 48px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 30px;
-  background-color:  #D44439;
   text-align: center;
-  
-  
+  background-color: #d44439;
+  z-index: 1;
 }
 </style>

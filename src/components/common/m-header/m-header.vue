@@ -17,54 +17,45 @@
 
 <script>
 export default {
-  name: "m-header"
-}
+  name: "m-header",
+};
 </script>
 
 <style lang="less" scoped>
-#m-header{
+#m-header {
+  position: fixed;
   display: flex;
-
+  top: 0;
   height: 49px;
   width: 100%;
-
-  background-color: #D44439;
-
-  .left-header{
+  z-index: 1;
+  background-color: #d44439;
+  .left-header {
     width: 49px;
-    span{
-      color: #fff;
-      font-size: 25px;
+    span {
       margin-left: 12px;
+      font-size: 25px;
       line-height: 49px;
+      color: #fff;
     }
-    // background-color: antiquewhite;
   }
-  
-  .centre-header{
+  .centre-header {
     flex: 1;
-
     text-align: center;
     line-height: 49px;
-    span{
+    span {
+      font-weight: 600;
       color: #fff;
-      font-weight:600;
     }
-    // background-color: #f00;
   }
-
-  .right-header{
+  .right-header {
     width: 49px;
-    // background-color: aquamarine;
-
-    span{
-      color: #fff;
-      font-size: 25px;
+    span {
       margin-left: 12px;
       line-height: 49px;
+      font-size: 25px;
+      color: #fff;
     }
   }
-
-
 }
 </style>
