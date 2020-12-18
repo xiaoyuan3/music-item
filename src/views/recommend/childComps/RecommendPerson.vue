@@ -78,7 +78,7 @@ export default {
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         width: 100px;
-        margin: 0;
+        margin: 0 2px;
         font-size: 12px;
         text-align: left;
         color: #6d6d6f;

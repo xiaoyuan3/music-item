@@ -8,7 +8,7 @@
 
 <script>
 // 网络部分
-import { getSingerList } from "network/singer";
+import { getSingerList,  } from "network/singer";
 // 公共组件
 import Scroll from "components/common/scroll/Scroll";
 // 子组件
@@ -34,6 +34,7 @@ export default {
         this.artists = res.artists;
       });
     },
+    
   },
 };
 </script>
