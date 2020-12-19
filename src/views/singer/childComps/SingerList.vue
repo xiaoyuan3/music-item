@@ -61,6 +61,12 @@ export default {
   methods:{
     selectItem(item){
       this.$emit('select', item)
+      this.$router.push(`/singer/${item.accountId}`)
+      // this.$router.push('artist'+ this.artists.accountId)
+      // this.$router.push({
+      //   path:'detail',
+      //   query:{id:123}
+      // })
     }
   }
 };

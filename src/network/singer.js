@@ -10,9 +10,6 @@ export function getSingerList() {
 
 export function getSingerDeail() {
   return request({
-    url: 'artist/detail/:id',
-    params: {
-      id
-    }
+    url: `artist/detail?id=${ser}`,
   })  
 }

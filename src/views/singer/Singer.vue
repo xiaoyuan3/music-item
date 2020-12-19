@@ -14,6 +14,8 @@ import { getSingerList } from "network/singer";
 import Scroll from "components/common/scroll/Scroll";
 // 子组件
 import SingerList from "./childComps/SingerList";
+// 传入数据
+import {mapMutations} from 'vuex'
 
 export default {
   name: "Singer",
@@ -45,10 +47,15 @@ export default {
     },
     // 监听子元素SingerList发送来的点击事件
     selectSinger(singer) {
-      this.$router.push({
-        path: `/artist/detail?id=${singer.accountId}`,
-      });
+      // this.$router.push({
+      //   path: `/artist/detail?id=${singer.accountId}`,
+      // console.log(singer);
+      // });
+      this.setSinger(singer)
     },
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   },
 };
 </script>

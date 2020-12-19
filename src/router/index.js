@@ -31,13 +31,13 @@ const routes = [
     children: [
       {
         // 子路由 歌手榜详情路由
-        path: '/artist/detail:id',
+        path: ':id',
         component: SingerDeail
       }
     ]
   },
   // {
-  //   path: '/artist/detail:id',
+  //   path: '/detail/:id',
   //   component: SingerDeail
   // }
 ]
