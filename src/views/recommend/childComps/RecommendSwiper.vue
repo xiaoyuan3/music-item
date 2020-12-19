@@ -31,13 +31,6 @@ export default {
     SwiperItem,
   },
   methods: {
-    // imageLoad() {
-    //   // 判断只监听一次 而不是4次
-    //   if(!this.isLoad) {
-    //     this.$emit('swiperImageLoad');
-    //     this.isLoad = true;
-    //   }
-    // }
   },
 };
 </script>

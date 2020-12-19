@@ -2,25 +2,27 @@
   <div id="app">
     <m-header></m-header>
     <tab-bar></tab-bar>
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
-import MHeader from 'components/common/m-header/m-header'
-import TabBar from 'components/content/TabBar'
+import MHeader from "components/common/m-header/m-header";
+import TabBar from "components/content/TabBar";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     MHeader,
-    TabBar
-  }
-}
+    TabBar,
+  },
+};
 </script>
 
 <style>
-body{
+body {
   margin: 0;
   padding: 0;
 }

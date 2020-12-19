@@ -28,13 +28,13 @@ export default {
     };
   },
   created() {
-    // 调用下面的getRecommendBanner函数
+    // 调用methods中的getRecommendBanner、getRecommendPerson函数
     this.getRecommendBanner();
     this.getRecommendPerson();
   },
   methods: {
-    // axios的网络请求
     getRecommendBanner() {
+      // 轮播图的 axios的网络请求 返回ppromise
       getRecommendBanner().then((res) => {
         // 打印数据
         // console.log(res.banners);
@@ -42,16 +42,12 @@ export default {
       });
     },
     getRecommendPerson() {
+      // 推荐歌单中的网络请求
       getRecommendPerson().then((res) => {
         // console.log(res.result);
         this.result = res.result;
       });
     },
-    // getRecommendBanner2() {
-    //   getRecommendBanner2().then((res) => {
-    //     console.log(res);
-    //   });
-    // },
   },
 };
 </script>

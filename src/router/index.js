@@ -4,27 +4,42 @@ import VueRouter from 'vue-router'
 const Recommend = () => import('../views/recommend/Recommend')
 const Rank = () => import('../views/rank/Rank')
 const Singer = () => import('../views/singer/Singer')
+const SingerDeail = () => import('../views/singer/SingerDeail')
 // 使用组件
 Vue.use(VueRouter);
 
 const routes = [
   {
-    // 默认首页
+    // 默认推荐页面
     path: '',
-    redirect:'/recommend'
+    redirect: '/recommend'
   },
   {
+    // 推荐页面路由
     path: '/recommend',
-    component:Recommend
+    component: Recommend
   },
   {
-    path:'/rank',
+    // 排行页面路由
+    path: '/rank',
     component: Rank
   },
   {
+    // 歌手榜路由
     path: '/singer',
-    component: Singer
-  }
+    component: Singer,
+    children: [
+      {
+        // 子路由 歌手榜详情路由
+        path: '/artist/detail:id',
+        component: SingerDeail
+      }
+    ]
+  },
+  // {
+  //   path: '/artist/detail:id',
+  //   component: SingerDeail
+  // }
 ]
 
 const router = new VueRouter({

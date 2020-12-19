@@ -41,7 +41,7 @@ export default {
     // 监听滚动的位置
     this.scroll.on("scroll", (position) => {
       // console.log(position);
-      // this.$emit("scroll", position);
+      this.$emit("scroll", position);
     });
   },
 };
