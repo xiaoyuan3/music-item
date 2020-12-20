@@ -52,7 +52,6 @@ export default {
     // 监听scroll滚动到底部  pullingUp 上拉事件
     if (this.pullUpLoad) {
       this.scroll.on("pullingUp", () => {
-        console.log("bb");
         this.$emit("pullingUp");
       });
     }

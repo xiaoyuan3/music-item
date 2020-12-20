@@ -137,7 +137,7 @@ export default {
     // 监听滚动的y轴
     contentScroll(position) {
       // console.log(position.y);
-      if (position.y >> -40) {
+      if ((-position.y) >= 40) {
         this.$refs.singerList.headShow = false;
         this.active = true;
       } else {
