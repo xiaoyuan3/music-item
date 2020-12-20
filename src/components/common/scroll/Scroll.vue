@@ -20,6 +20,10 @@ export default {
       type: Number,
       default: 3,
     },
+    pullUpLoad: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -37,12 +41,26 @@ export default {
       scrollbar: true,
       click: true,
       probeType: this.probeType,
+      pullUpLoad: this.pullUpLoad,
     });
     // 监听滚动的位置
     this.scroll.on("scroll", (position) => {
       // console.log(position);
       this.$emit("scroll", position);
     });
+
+    // 监听scroll滚动到底部  pullingUp 上拉事件
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        console.log("bb");
+        this.$emit("pullingUp");
+      });
+    }
+  },
+  methods: {
+    finishPullUp() {
+      this.scroll && this.scroll.finishPullUp();
+    },
   },
 };
 </script>

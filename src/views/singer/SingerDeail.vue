@@ -23,9 +23,13 @@ export default {
   },
   methods:{
     getSingerDeail(){
+      // this.singer.id 以参数的形式传递给axios
       getSingerDeail(this.singer.id).then(res => {
         console.log(res);
       })
+      // getSingerDeail().then(res => {
+      //   console.log(res);
+      // })
     }
   }
 };
