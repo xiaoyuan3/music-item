@@ -1,6 +1,8 @@
 <template>
   <div class="singer">
-    <div :class="{ active: active }">{{ name }}.{{ sex }}</div>
+    <div :class="{ active: active }">
+      {{ name }}<span v-show="pointShow">.</span>{{ sex }}
+    </div>
     <div :class="{ host: active }">热门歌手</div>
     <scroll
       ref="scroll"
@@ -17,8 +19,8 @@
         @aboveClick="aboveClick"
         @underClick="underClick"
       ></singer-list>
-      <router-view />
     </scroll>
+    <router-view />
   </div>
 </template>
 
@@ -44,14 +46,15 @@ export default {
         type: -1,
         area: -1,
         initial: "",
-        // limit: [],
-        // offset: 0,
+        limit: 30,
+        offset: 0,
       },
       artists: [],
       active: false,
       // host:false
       name: "全部歌手",
       sex: "",
+      pointShow: false,
     };
   },
   created() {
@@ -61,17 +64,22 @@ export default {
   mounted() {
     console.log(this.$refs.singerList.$el.offsetTop);
   },
+  watch: {},
   methods: {
+    // 头部国籍点击事件
     aboveClick(index) {
+      this.$refs.scroll.pullingUpOver = false;
       console.log(this.$refs.singerList.titles);
       const currentUder = this.$refs.singerList.currentUder;
       console.log(currentUder);
-      if (index === 0 && currentUder === 0 ) {
+      if (index === 0 && currentUder === 0) {
         this.name = "华语";
         this.sex = "男";
+        this.pointShow = true;
       } else {
         this.name = this.$refs.singerList.titles[index];
-        this.sex = this.$refs.singerList.unders[currentUder]
+        this.sex = this.$refs.singerList.unders[currentUder];
+        this.pointShow = true;
       }
       switch (index) {
         case 0:
@@ -90,25 +98,41 @@ export default {
           this.singers.area = 0;
           break;
       }
-      let type = this.singers.type;
-      let area = this.singers.area;
-      let initial = this.singers.initial;
-      let limit = this.singers.limit;
-      let offset = this.singers.offset;
-      getSingerList(type, area, initial, limit, offset).then((res) => {
+      // 点击头部国籍 上拉加载更多
+      getSingerList(
+        this.singers.type,
+        this.singers.area,
+        this.singers.initial,
+        this.singers.limit,
+        this.singers.offset
+      ).then((res) => {
         console.log(res);
+        if (res.more === false) {
+          this.$refs.scroll.finishPullUp();
+          this.$refs.scroll.closePullUp();
+          this.$refs.scroll.refresh();
+          this.$refs.scroll.pullingUpOver = true;
+          return;
+        }
         this.artists = res.artists;
         // this.artists.push(...res.artists);
+        this.singers.offset += 1;
+        this.$refs.scroll.finishPullUp();
+        this.$refs.scroll.refresh();
       });
     },
+    // 头部下面的性别点击事件
     underClick(index) {
-      const current = this.$refs.singerList.current
+      this.$refs.scroll.pullingUpOver = false;
+      const current = this.$refs.singerList.current;
       if (index === 0 && current === 0) {
         this.name = "华语";
         this.sex = "男";
+        this.pointShow = true;
       } else {
-        this.name = this.$refs.singerList.titles[current]
+        this.name = this.$refs.singerList.titles[current];
         this.sex = this.$refs.singerList.unders[index];
+        this.pointShow = true;
       }
       switch (index) {
         case 0:
@@ -121,27 +145,35 @@ export default {
           this.singers.type = 3;
           break;
       }
-      let type = this.singers.type;
-      let area = this.singers.area;
-      let initial = this.singers.initial;
-      let limit = this.singers.limit;
-      let offset = this.singers.offset;
-      getSingerList(type, area, initial, limit, offset).then((res) => {
+      // 点击头部性别 上拉加载更多
+      getSingerList(
+        this.singers.type,
+        this.singers.area,
+        this.singers.initial,
+        this.singers.limit,
+        this.singers.offset
+      ).then((res) => {
         console.log(res);
+        if (res.more === false) {
+          this.$refs.scroll.finishPullUp();
+          this.$refs.scroll.closePullUp();
+          this.$refs.scroll.refresh();
+          this.$refs.scroll.pullingUpOver = true;
+          return;
+        }
         this.artists = res.artists;
         // this.artists.push(...res.artists);
-        // this.offset += 1
+        this.singers.offset += 1;
         this.$refs.scroll.finishPullUp();
+        this.$refs.scroll.refresh();
       });
     },
     // 监听滚动的y轴
     contentScroll(position) {
       // console.log(position.y);
-      if ((-position.y) >= 40) {
-        this.$refs.singerList.headShow = false;
+      if (-position.y >= 40) {
         this.active = true;
       } else {
-        this.$refs.singerList.headShow = true;
         this.active = false;
       }
     },
@@ -154,22 +186,36 @@ export default {
       this.setSinger(singer);
     },
     loadMore() {
-      // console.log('-------');
-      this.getSingerList(this.singers);
+      console.log("-------");
+      this.getSingerList(
+        this.singers.type,
+        this.singers.area,
+        this.singers.initial,
+        this.singers.limit,
+        this.singers.offset
+      );
     },
     getSingerList() {
       // 歌手榜单接口返回的promise函数
-      let type = this.singers.type;
-      let area = this.singers.area;
-      let initial = this.singers.initial;
-      let limit = this.singers.limit;
-      let offset = this.singers.offset;
+      const type = this.singers.type;
+      const area = this.singers.area;
+      const initial = this.singers.initial;
+      const offset = this.singers.offset + 1;
+      const limit = offset * 30;
       getSingerList(type, area, initial, limit, offset).then((res) => {
         console.log(res);
+        if (res.more === false) {
+          this.$refs.scroll.finishPullUp();
+          this.$refs.scroll.closePullUp();
+          this.$refs.scroll.refresh();
+          this.$refs.scroll.pullingUpOver = true;
+          return;
+        }
         this.artists = res.artists;
         // this.artists.push(...res.artists);
-        // this.offset += 1
+        this.singers.offset += 1;
         this.$refs.scroll.finishPullUp();
+        this.$refs.scroll.refresh();
       });
     },
     ...mapMutations({

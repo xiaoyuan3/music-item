@@ -28,6 +28,7 @@ export default {
   data() {
     return {
       scroll: null,
+      pullingUpOver: false,
     };
   },
   created() {
@@ -52,13 +53,23 @@ export default {
     // 监听scroll滚动到底部  pullingUp 上拉事件
     if (this.pullUpLoad) {
       this.scroll.on("pullingUp", () => {
-        this.$emit("pullingUp");
+        // 判断是否需要加载
+        if (!this.pullingUpOver) {
+          this.$emit("pullingUp");
+        }
       });
     }
   },
   methods: {
+    refresh() {
+      // console.log('---');
+      this.scroll && this.scroll.refresh();
+    },
     finishPullUp() {
       this.scroll && this.scroll.finishPullUp();
+    },
+    closePullUp() {
+      this.scroll && this.scroll.closePullUp();
     },
   },
 };

@@ -7,9 +7,9 @@ export function getSingerList(type, area, initial, limit, offset) {
     params: {
       type: type,
       area: area,
-      // initial,
-      // limit,
-      // offset
+      initial,
+      limit,
+      offset
     }
   })
 }

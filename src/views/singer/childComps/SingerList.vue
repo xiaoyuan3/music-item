@@ -1,6 +1,6 @@
 <template>
   <div class="singerlist">
-    <div v-show="headShow" class="singer-list-header">
+    <div class="singer-list-header">
       <div class="singer-list-header-above">
         <span
           :class="{ isShow: index === current }"
@@ -21,7 +21,7 @@
         >
       </div>
     </div>
-    <div v-show="!headShow" class="head-list">哈哈</div>
+    <!-- <div v-show="!headShow" class="head-list"></div> -->
     <div class="singer-list-singer" >热门歌手</div>
     <div
       @click="selectItem(item)"
@@ -93,7 +93,7 @@ export default {
   },
   data() {
     return {
-      headShow:true,
+      // headShow:true,
       current: "",
       currentUder: "",
     };
@@ -167,16 +167,16 @@ export default {
       }
     }
   }
-  .head-list{
-    position: absolute!important;
-    height: 26px;
-    width: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 11;
-    background-color: red;
-  }
+  // .head-list{
+  //   position: absolute!important;
+  //   height: 26px;
+  //   width: 100%;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   z-index: 11;
+  //   background-color: red;
+  // }
 
   .singer-list-singer {
     margin-bottom: 5px;
@@ -189,6 +189,7 @@ export default {
     
   }
   .x {
+    // position: fixed;
     margin: 6px 6px 6px 10px;
     border-bottom: 1px solid #e1e2e2;
     overflow: hidden;
