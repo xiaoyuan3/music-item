@@ -34,37 +34,7 @@
       <span>{{ item.name }}</span>
       <!-- </a> -->
     </div>
-    <!-- <div class="alphabet">
-      <p>
-        <a href="">热</a> <br />
-        <a href="">A</a> <br />
-        <a href="">B</a> <br />
-        <a href="">C</a> <br />
-        <a href="">D</a> <br />
-        <a href="">E</a> <br />
-        <a href="">F</a> <br />
-        <a href="">G</a> <br />
-        <a href="">H</a> <br />
-        <a href="">I</a> <br />
-        <a href="">J</a> <br />
-        <a href="">K</a> <br />
-        <a href="">L</a> <br />
-        <a href="">M</a> <br />
-        <a href="">N</a> <br />
-        <a href="">O</a> <br />
-        <a href="">P</a> <br />
-        <a href="">Q</a> <br />
-        <a href="">R</a> <br />
-        <a href="">S</a> <br />
-        <a href="">T</a> <br />
-        <a href="">U</a> <br />
-        <a href="">V</a> <br />
-        <a href="">W</a> <br />
-        <a href="">X</a> <br />
-        <a href="">Y</a> <br />
-        <a href="">Z</a>
-      </p>
-    </div> -->
+    
   </div>
 </template>
 

@@ -21,6 +21,12 @@
         @underClick="underClick"
       ></singer-list>
     </scroll>
+    <div class="s">
+      <div v-for="(item, index) in letterArr" :key="index" class="p">
+        {{ item }}
+      </div>
+    </div>
+
     <router-view />
   </div>
 </template>
@@ -48,7 +54,7 @@ export default {
         area: -1,
         initial: "",
         limit: 30,
-        offset: 0,
+        offset: 1,
       },
       artists: [],
       active: false,
@@ -56,7 +62,8 @@ export default {
       name: "全部歌手",
       sex: "",
       pointShow: false,
-      letterArr:['热门歌手']
+      letterArr: ["热"],
+      ret: ["-1"],
     };
   },
   created() {
@@ -71,105 +78,69 @@ export default {
   methods: {
     // 头部国籍点击事件
     aboveClick(index) {
+      var singerList = this.$refs.singerList;
+
       this.$refs.scroll.pullingUpOver = false;
-      console.log(this.$refs.singerList.titles);
-      const currentUder = this.$refs.singerList.currentUder;
-      console.log(currentUder);
+      const currentUder = singerList.currentUder;
       if (index === 0 && currentUder === 0) {
         this.name = "华语";
         this.sex = "男";
         this.pointShow = true;
       } else {
-        this.name = this.$refs.singerList.titles[index];
-        this.sex = this.$refs.singerList.unders[currentUder];
+        this.name = singerList.titles[index];
+        this.sex = singerList.unders[currentUder];
         this.pointShow = true;
       }
+      let area = this.singers.area;
       switch (index) {
         case 0:
-          this.singers.area = 7;
+          area = 7;
           break;
         case 1:
-          this.singers.area = 96;
+          area = 96;
           break;
         case 2:
-          this.singers.area = 8;
+          area = 8;
           break;
         case 3:
-          this.singers.area = 16;
+          area = 16;
           break;
         case 4:
-          this.singers.area = 0;
+          area = 0;
           break;
       }
       // 点击头部国籍 上拉加载更多
-      getSingerList(
-        this.singers.type,
-        this.singers.area,
-        this.singers.initial,
-        this.singers.limit,
-        this.singers.offset
-      ).then((res) => {
-        console.log(res);
-        if (res.more === false) {
-          this.$refs.scroll.finishPullUp();
-          this.$refs.scroll.closePullUp();
-          this.$refs.scroll.refresh();
-          this.$refs.scroll.pullingUpOver = true;
-          return;
-        }
-        this.artists = res.artists;
-        // this.artists.push(...res.artists);
-        this.singers.offset += 1;
-        this.$refs.scroll.finishPullUp();
-        this.$refs.scroll.refresh();
-      });
+      this.getSingerList();
     },
     // 头部下面的性别点击事件
     underClick(index) {
+      var singerList = this.$refs.singerList;
+
       this.$refs.scroll.pullingUpOver = false;
-      const current = this.$refs.singerList.current;
+      const current = singerList.current;
       if (index === 0 && current === 0) {
         this.name = "华语";
         this.sex = "男";
         this.pointShow = true;
       } else {
-        this.name = this.$refs.singerList.titles[current];
-        this.sex = this.$refs.singerList.unders[index];
+        this.name = singerList.titles[current];
+        this.sex = singerList.unders[index];
         this.pointShow = true;
       }
+      var type = this.singers.type;
       switch (index) {
         case 0:
-          this.singers.type = 1;
+          type = 1;
           break;
         case 1:
-          this.singers.type = 2;
+          type = 2;
           break;
         case 2:
-          this.singers.type = 3;
+          type = 3;
           break;
       }
       // 点击头部性别 上拉加载更多
-      getSingerList(
-        this.singers.type,
-        this.singers.area,
-        this.singers.initial,
-        this.singers.limit,
-        this.singers.offset
-      ).then((res) => {
-        console.log(res);
-        if (res.more === false) {
-          this.$refs.scroll.finishPullUp();
-          this.$refs.scroll.closePullUp();
-          this.$refs.scroll.refresh();
-          this.$refs.scroll.pullingUpOver = true;
-          return;
-        }
-        this.artists = res.artists;
-        // this.artists.push(...res.artists);
-        this.singers.offset += 1;
-        this.$refs.scroll.finishPullUp();
-        this.$refs.scroll.refresh();
-      });
+      this.getSingerList();
     },
     // 监听滚动的y轴  添加class属性active
     contentScroll(position) {
@@ -182,43 +153,34 @@ export default {
     },
     // 监听子元素SingerList发送来的点击事件
     selectSinger(singer) {
-      // this.$router.push({
-      //   path: `/artist/detail?id=${singer.accountId}`,
-      // console.log(singer);
-      // });
       this.setSinger(singer);
     },
     loadMore() {
       console.log("-------");
-      this.getSingerList(
-        this.singers.type,
-        this.singers.area,
-        this.singers.initial,
-        this.singers.limit,
-        this.singers.offset
-      );
+      this.getSingerList();
     },
     getSingerList() {
+      // debugger
       // 歌手榜单接口返回的promise函数
-      const type = this.singers.type;
-      const area = this.singers.area;
-      const initial = this.singers.initial;
-      const offset = this.singers.offset + 1;
-      const limit = offset * 30;
+      const { type, area, initial, offset, limit } = this.singers;
       getSingerList(type, area, initial, limit, offset).then((res) => {
         console.log(res);
+        var scroll = this.$refs.scroll
         if (res.more === false) {
-          this.$refs.scroll.finishPullUp();
-          this.$refs.scroll.closePullUp();
-          this.$refs.scroll.refresh();
-          this.$refs.scroll.pullingUpOver = true;
+          scroll.finishPullUp();
+          scroll.closePullUp();
+          scroll.refresh();
+          scroll.pullingUpOver = true;
           return;
         }
-        this.artists = res.artists;
-        // this.artists.push(...res.artists);
-        this.singers.offset += 1;
-        this.$refs.scroll.finishPullUp();
-        this.$refs.scroll.refresh();
+        // this.artists = res.artists;
+        this.ret = res.initial;
+        // console.log(ret);
+        this.singers.offset += 30;
+        this.artists.push(...res.artists);
+        
+        scroll.finishPullUp();
+        scroll.refresh();
       });
     },
     getAZ() {
@@ -275,5 +237,17 @@ export default {
 }
 .singer-list {
   height: 100%;
+}
+.s {
+  position: fixed;
+  top: 188px;
+  right: 5px;
+  font-size: 12px;
+  text-align: center;
+  // font-weight: 200;
+  color: #000;
+  .p {
+    margin: 1px;
+  }
 }
 </style>
