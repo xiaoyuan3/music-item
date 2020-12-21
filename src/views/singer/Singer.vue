@@ -11,6 +11,7 @@
       @pullingUp="loadMore"
     >
       <singer-list
+        class="singer-list"
         ref="singerList"
         @select="selectSinger"
         :artists="artists"
@@ -55,11 +56,13 @@ export default {
       name: "全部歌手",
       sex: "",
       pointShow: false,
+      letterArr:['热门歌手']
     };
   },
   created() {
     // 初始化 调用methods里的getSingerList
     this.getSingerList();
+    this.getAZ();
   },
   mounted() {
     console.log(this.$refs.singerList.$el.offsetTop);
@@ -168,7 +171,7 @@ export default {
         this.$refs.scroll.refresh();
       });
     },
-    // 监听滚动的y轴
+    // 监听滚动的y轴  添加class属性active
     contentScroll(position) {
       // console.log(position.y);
       if (-position.y >= 40) {
@@ -218,6 +221,12 @@ export default {
         this.$refs.scroll.refresh();
       });
     },
+    getAZ() {
+      for (let i = 65; i < 91; i++) {
+        this.letterArr.push(String.fromCharCode(i));
+      }
+      console.log(this.letterArr);
+    },
     ...mapMutations({
       setSinger: "SET_SINGER",
     }),
@@ -226,6 +235,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.singer {
+  height: 100%;
+}
 .active {
   position: fixed;
   height: 26px;
@@ -260,5 +272,8 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
+}
+.singer-list {
+  height: 100%;
 }
 </style>

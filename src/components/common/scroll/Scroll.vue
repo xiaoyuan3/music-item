@@ -43,6 +43,7 @@ export default {
       click: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
+      tap:true
     });
     // 监听滚动的位置
     this.scroll.on("scroll", (position) => {
