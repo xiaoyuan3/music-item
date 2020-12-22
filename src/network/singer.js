@@ -5,8 +5,8 @@ export function getSingerList(type, area, initial, limit, offset) {
   return request({
     url: '/artist/list',
     params: {
-      type: type,
-      area: area,
+      type,
+      area,
       initial,
       limit,
       offset

@@ -22,7 +22,7 @@
       </div>
     </div>
     <!-- <div v-show="!headShow" class="head-list"></div> -->
-    <div class="singer-list-singer" >热门歌手</div>
+    <div class="singer-list-singer">热门歌手</div>
     <div
       @click="selectItem(item)"
       v-for="(item, index) in artists"
@@ -34,7 +34,6 @@
       <span>{{ item.name }}</span>
       <!-- </a> -->
     </div>
-    
   </div>
 </template>
 
@@ -66,6 +65,8 @@ export default {
       // headShow:true,
       current: "",
       currentUder: "",
+      xx: 0,
+      xy: 0,
     };
   },
   created() {
@@ -89,10 +90,14 @@ export default {
         this.currentUder = 0;
       }
       this.current = index;
+      this.xx = 1;
 
       this.$emit("aboveClick", index);
       // this.titles[index].isShow = true
       console.log(index);
+      setTimeout(() => {
+        this.xx = 0;
+      }, 1000);
     },
     // 歌手性别的点击事件
     underClick(index) {
@@ -100,10 +105,15 @@ export default {
         this.current = 0;
       }
       this.currentUder = index;
+      this.xy = 1;
 
+      // this.xy = 0
       // this.current = 0;
       this.$emit("underClick", index);
       console.log(index);
+      setTimeout(() => {
+        this.xy = 0;
+      }, 1000);
     },
   },
 };
@@ -156,7 +166,6 @@ export default {
     background-color: #f8f8f8;
     color: #606060;
     // margin: 0 0 10px 0;
-    
   }
   .x {
     // position: fixed;

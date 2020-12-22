@@ -54,7 +54,7 @@ export default {
         area: -1,
         initial: "",
         limit: 30,
-        offset: 1,
+        offset: 0,
       },
       artists: [],
       active: false,
@@ -78,35 +78,35 @@ export default {
   methods: {
     // 头部国籍点击事件
     aboveClick(index) {
-      var singerList = this.$refs.singerList;
-
       this.$refs.scroll.pullingUpOver = false;
-      const currentUder = singerList.currentUder;
+      const currentUder = this.$refs.singerList.currentUder;
       if (index === 0 && currentUder === 0) {
         this.name = "华语";
         this.sex = "男";
+        this.singers.area = 7;
+        this.singers.type = 1;
         this.pointShow = true;
       } else {
-        this.name = singerList.titles[index];
-        this.sex = singerList.unders[currentUder];
+        let singerList = this.$refs.singerList;
+        this.name = this.$refs.singerList.titles[index];
+        this.sex = this.$refs.singerList.unders[currentUder];
         this.pointShow = true;
       }
-      let area = this.singers.area;
       switch (index) {
         case 0:
-          area = 7;
+          this.singers.area = 7;
           break;
         case 1:
-          area = 96;
+          this.singers.area = 96;
           break;
         case 2:
-          area = 8;
+          this.singers.area = 8;
           break;
         case 3:
-          area = 16;
+          this.singers.area = 16;
           break;
         case 4:
-          area = 0;
+          this.singers.area = 0;
           break;
       }
       // 点击头部国籍 上拉加载更多
@@ -114,29 +114,30 @@ export default {
     },
     // 头部下面的性别点击事件
     underClick(index) {
-      var singerList = this.$refs.singerList;
-
+      this.xy = 1;
       this.$refs.scroll.pullingUpOver = false;
-      const current = singerList.current;
+      const current = this.$refs.singerList.current;
       if (index === 0 && current === 0) {
         this.name = "华语";
         this.sex = "男";
+        this.singers.area = 7;
+        this.singers.type = 1;
         this.pointShow = true;
       } else {
+        let singerList = this.$refs.singerList;
         this.name = singerList.titles[current];
         this.sex = singerList.unders[index];
         this.pointShow = true;
       }
-      var type = this.singers.type;
       switch (index) {
         case 0:
-          type = 1;
+          this.singers.type = 1;
           break;
         case 1:
-          type = 2;
+          this.singers.type = 2;
           break;
         case 2:
-          type = 3;
+          this.singers.type = 3;
           break;
       }
       // 点击头部性别 上拉加载更多
@@ -162,23 +163,30 @@ export default {
     getSingerList() {
       // debugger
       // 歌手榜单接口返回的promise函数
-      const { type, area, initial, offset, limit } = this.singers;
+      let { type, area, initial, limit, offset } = this.singers;
       getSingerList(type, area, initial, limit, offset).then((res) => {
         console.log(res);
-        var scroll = this.$refs.scroll
+        var scroll = this.$refs.scroll;
         if (res.more === false) {
+          // let scroll = this.$refs.scroll
           scroll.finishPullUp();
           scroll.closePullUp();
           scroll.refresh();
           scroll.pullingUpOver = true;
           return;
         }
-        // this.artists = res.artists;
-        this.ret = res.initial;
-        // console.log(ret);
-        this.singers.offset += 30;
-        this.artists.push(...res.artists);
-        
+        // this.ret = res.initial;
+        let { xx, xy } = this.$refs.singerList
+        if (xx !== 0 || xy !== 0) {
+          console.log("00");
+          let singers = this.singers;
+          singers.offset = 0;
+          this.artists = res.artists;
+        } else {
+          console.log("bb");
+          this.singers.offset += 30;
+          this.artists.push(...res.artists);
+        }
         scroll.finishPullUp();
         scroll.refresh();
       });
