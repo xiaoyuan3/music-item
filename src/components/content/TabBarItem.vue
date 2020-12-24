@@ -34,7 +34,7 @@ export default {
 <style lang="less" scoped>
 #tab-bar-item {
   flex: 1;
-  padding: 0 35px;
+  padding: 0 25px;
   .active {
     // width: 40px;
     padding-bottom: 2px;

@@ -23,6 +23,7 @@
     </div>
     <!-- <div v-show="!headShow" class="head-list"></div> -->
     <div class="singer-list-singer">热门歌手</div>
+    <!-- <div v-for="(item, index) in letterArr">{{item}}</div> -->
     <div
       @click="selectItem(item)"
       v-for="(item, index) in artists"
@@ -32,12 +33,14 @@
       <!-- <a :href="null"> -->
       <img v-lazy="item.img1v1Url" alt="" />
       <span>{{ item.name }}</span>
+
       <!-- </a> -->
     </div>
   </div>
 </template>
 
 <script>
+let pinyin = require('js-pinyin');
 export default {
   name: "SingList",
   props: {
@@ -59,6 +62,12 @@ export default {
         return [];
       },
     },
+    letterArr: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
     return {
@@ -70,9 +79,13 @@ export default {
     };
   },
   created() {
-    // this.getCurrent();
+    // console.log(pinyin.getCamelChars(this.artists.name)[0]);
   },
-  computed: {},
+  mounted(){
+    // console.log(pinyin.getCamelChars(this.artists.name)[0]);
+  },
+  computed: {
+  },
   methods: {
     // 点击事件 使用的vuex 储存数据歌手的id
     selectItem(item) {
@@ -83,6 +96,7 @@ export default {
       //   path:'detail',
       //   query:{id:123}
       // })
+      // console.log(pinyin.getCamelChars(res.artists.name));
     },
     // 华语 欧美 日本 韩国 其他 歌手国籍的点击事件
     aboveClick(index) {

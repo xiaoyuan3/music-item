@@ -24,6 +24,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    // listenScroll:{
+    //   type:Boolean,
+    //   default: false
+    // }
   },
   data() {
     return {
@@ -43,13 +47,17 @@ export default {
       click: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
-      tap:true
     });
     // 监听滚动的位置
-    this.scroll.on("scroll", (position) => {
-      // console.log(position);
-      this.$emit("scroll", position);
-    });
+    // if (true) {
+      // let me = this;
+      // console.log(me);
+      this.scroll.on("scroll", (position) => {
+        // console.log(position);
+        // this.$emit("scrollView",position)
+        this.$emit("scroll", position);
+      });
+    // }
 
     // 监听scroll滚动到底部  pullingUp 上拉事件
     if (this.pullUpLoad) {
@@ -71,6 +79,12 @@ export default {
     },
     closePullUp() {
       this.scroll && this.scroll.closePullUp();
+    },
+    scrollTo() {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
+    },
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
     },
   },
 };

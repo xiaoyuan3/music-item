@@ -10,6 +10,9 @@
     <tab-bar-item path="/singer" class="right">
       <div slot="item-text">歌手</div>
     </tab-bar-item>
+    <tab-bar-item path="/list" class="right">
+      <div slot="item-text">列表</div>
+    </tab-bar-item>
   </div>
 </template>
 

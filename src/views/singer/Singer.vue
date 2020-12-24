@@ -17,6 +17,7 @@
         :artists="artists"
         :titles="['华语', '欧美', '日本', '韩国', '其他']"
         :unders="['男', '女', '乐队/组合']"
+        :letterArr="letterArr"
         @aboveClick="aboveClick"
         @underClick="underClick"
       ></singer-list>
@@ -40,6 +41,7 @@ import Scroll from "components/common/scroll/Scroll";
 import SingerList from "./childComps/SingerList";
 // 传入数据
 import { mapMutations } from "vuex";
+let pinyin = require("js-pinyin");
 
 export default {
   name: "Singer",
@@ -64,6 +66,7 @@ export default {
       pointShow: false,
       letterArr: ["热"],
       ret: ["-1"],
+      words:[]
     };
   },
   created() {
@@ -71,9 +74,7 @@ export default {
     this.getSingerList();
     this.getAZ();
   },
-  mounted() {
-    console.log(this.$refs.singerList.$el.offsetTop);
-  },
+  mounted() {},
   watch: {},
   methods: {
     // 头部国籍点击事件
@@ -165,6 +166,10 @@ export default {
       // 歌手榜单接口返回的promise函数
       let { type, area, initial, limit, offset } = this.singers;
       getSingerList(type, area, initial, limit, offset).then((res) => {
+        res.artists.forEach((e) => {
+          e.FIndex = "";
+        });
+        console.log(res.artists);
         console.log(res);
         var scroll = this.$refs.scroll;
         if (res.more === false) {
@@ -176,7 +181,7 @@ export default {
           return;
         }
         // this.ret = res.initial;
-        let { xx, xy } = this.$refs.singerList
+        let { xx, xy } = this.$refs.singerList;
         if (xx !== 0 || xy !== 0) {
           console.log("00");
           let singers = this.singers;
@@ -187,6 +192,12 @@ export default {
           this.singers.offset += 30;
           this.artists.push(...res.artists);
         }
+        // console.log(pinyin.getFullChars(this.name));
+        res.artists.forEach((x) => {
+          console.log(pinyin.getCamelChars(x.name[0]));
+          console.log(x.name);
+        });
+        // console.log(pinyin.getCamelChars(res.artists.name));
         scroll.finishPullUp();
         scroll.refresh();
       });
