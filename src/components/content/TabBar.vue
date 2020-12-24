@@ -40,6 +40,6 @@ export default {
   height: 30px;
   text-align: center;
   background-color: #d44439;
-  z-index: 1;
+  z-index: 99;
 }
 </style>

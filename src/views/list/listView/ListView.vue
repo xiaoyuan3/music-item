@@ -1,20 +1,17 @@
 <template>
   <div class="list-view">
     <ul class="list-view-ul1">
-      <li
-        v-for="group in artists"
-        class="list-view-li1"
-        ref="listGroup"
-      >
+      <li v-for="(group, key) in artists" :key="key" class="list-view-li1" ref="listGroup">
         <p class="group-title">{{ group.title }}</p>
         <ul class="ul2">
-          <li v-for="item in group.items" class="li2" @touchstart="touchstart">
+          <li v-for="(item, key) in group.items" :key="key" class="li2">
             <img v-lazy="item.picUrl" alt="" />
             <span class="span">{{ item.name }}</span>
           </li>
         </ul>
       </li>
     </ul>
+
     <!-- <div>
       <ul class="list-new">
         <li
@@ -47,30 +44,7 @@ export default {
       },
     },
   },
-  methods(){
-    this.pointt()
-  },
-  computed: {
-    // 计算属性数据的调用
-    // shortcutList() {
-    //   return this.artists.map((group) => {
-    //     return group.title.substr(0, 1);
-    //   });
-    // },
-    
-  },
-  methods: {
-    pointt() {
-      this.artists.map(group => {
-        this.letterPoint = group.title.substr(0, 1)
-        console.log(this.letterPoint);
-      })
-    },
-    touchstart(){
-      // console.log('xx');
-    }
-    
-  },
+  methods: {},
 };
 </script>
 
@@ -82,16 +56,13 @@ ul {
 }
 
 .list-view {
-  position: relative;
   overflow: hidden;
-  // margin-top: 78px;
-  // top: 64px;
   .list-view-ul1 {
     list-style: none;
     .group-title {
       width: 100%;
       // margin-bottom: 5px;
-      margin: 0;
+      margin: 0px;
       // padding: 0 10px;
       font-size: 12px;
       padding: 5px 0 5px 15px;
@@ -126,7 +97,6 @@ ul {
     // top: 50%;
     // right: 5px;
     position: absolute;
-    z-index: 9;
     right: 0;
     top: 78px;
     width: 20px;

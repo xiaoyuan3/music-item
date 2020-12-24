@@ -1,7 +1,9 @@
 <template>
   <div class="list">
     <!-- <h2>你好</h2> -->
-    <p></p>
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+      <p class="fixed-title">{{ fixedTitle }}</p>
+    </div>
     <scroll @scroll="scroll" class="list-content" ref="scroll">
       <list-view ref="listView" :artists="artists"></list-view>
     </scroll>
@@ -34,6 +36,7 @@ import { getData } from "assets/js/list";
 
 const HOT_LENGTH = 10;
 const HOT_NAME = "热门歌手";
+const TITLE_HEIGHT = 26;
 export default {
   components: {
     ListView,
@@ -45,6 +48,7 @@ export default {
       currentIndex: 0,
       artists: [],
       current2: false,
+      diff: -1,
     };
   },
   created() {
@@ -156,28 +160,37 @@ export default {
   },
   watch: {
     scrollY(newval) {
-      console.log('xx');
+      // console.log('xx');
       this._calculateHeight();
       const listHeight = this.listHeight;
-      if(newval > 0) {
-        this.currentIndex = 0
-        return
+      if (newval > 0) {
+        this.currentIndex = 0;
+        return;
       }
       // 在中间部分滚动
-      for (let i = 0; i < listHeight.length-1; i++) {
+      for (let i = 0; i < listHeight.length - 1; i++) {
         let height1 = listHeight[i];
         // console.log(height1);
         let height2 = listHeight[i + 1];
         // console.log(listHeight[i]);
         if (-newval >= height1 && -newval < height2) {
           this.currentIndex = i;
+          this.diff = height2 + newval + 1;
           // console.log(this.currentIndex);
           console.log(i);
           return;
         }
       }
       // 当滚动到底部， 且newval大于最后一个元素的上限
-      this.currentIndex = listHeight.length-2;
+      this.currentIndex = listHeight.length - 2;
+    },
+    diff(newval) {
+      let fixedTop =newval > 0 && newval < TITLE_HEIGHT ? newval - TITLE_HEIGHT : 0;
+      if (this.fixedTop === fixedTop) {
+        return;
+      }
+      this.fixedTop = fixedTop;
+      this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`;
     },
   },
   computed: {
@@ -185,6 +198,15 @@ export default {
       return this.artists.map((group) => {
         return group.title.substr(0, 1);
       });
+    },
+    fixedTitle() {
+      if (this.scrollY > 0) {
+        return "";
+      }
+      console.log(this.artists);
+      return this.artists[this.currentIndex]
+        ? this.artists[this.currentIndex].title
+        : "";
     },
   },
 };
@@ -197,6 +219,7 @@ ul {
   padding: 0;
 }
 .list {
+  position: relative;
   .list-content {
     position: absolute;
     top: 78px;
@@ -223,6 +246,23 @@ ul {
     }
     .current {
       color: red;
+    }
+  }
+  .list-fixed {
+    position: fixed;
+    top: 66px;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    // height: 26px;
+    .fixed-title {
+      // height: 26px;
+      font-size: 12px;
+      // line-height: 26px;
+      // margin: 5px 0 5px 15px;
+      padding: 5px 0 5px 15px;
+      background-color: #f8f8f8;
+      color: #606060;
     }
   }
 }
