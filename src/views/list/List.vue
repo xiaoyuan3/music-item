@@ -57,10 +57,11 @@ export default {
     this.listHeight = [];
   },
   methods: {
-    // 触摸事件
+    // 点击左侧字母事件
     onShortcutTouchStart(e) {
-      // console.log(e.target);
-      console.log(e);
+      // console.log(e.target);  <li>点击的目标元素</li>
+      // console.log(e);
+      // e.target就是点击事件 触发这个事件的目标元素
       let anchorIndex = getData(e.target, "index");
 
       // console.log(e);
@@ -219,7 +220,6 @@ ul {
   padding: 0;
 }
 .list {
-  position: relative;
   .list-content {
     position: absolute;
     top: 78px;
