@@ -10,7 +10,7 @@
 
 <script>
 import MHeader from "components/common/m-header/m-header";
-import TabBar from "components/content/TabBar";
+import TabBar from "components/content/tabBar/TabBar";
 
 export default {
   name: "App",

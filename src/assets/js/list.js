@@ -9,5 +9,5 @@ export function getData(el, name, val) {
   // getAttribute()查询的属性的名字
   console.log(el.getAttribute(Myname));
   return el.getAttribute(Myname)
-  
 }
+

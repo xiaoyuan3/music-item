@@ -4,7 +4,7 @@
       <li v-for="(group, key) in artists" :key="key" class="list-view-li1" ref="listGroup">
         <p class="group-title">{{ group.title }}</p>
         <ul class="ul2">
-          <li v-for="(item, key) in group.items" :key="key" class="li2">
+          <li @click="selectClick(item)" v-for="(item, key) in group.items" :key="key" class="li2">
             <img v-lazy="item.picUrl" alt="" />
             <span class="span">{{ item.name }}</span>
           </li>
@@ -44,7 +44,11 @@ export default {
       },
     },
   },
-  methods: {},
+  methods: {
+    selectClick(item){
+      this.$emit('select', item)
+    }
+  },
 };
 </script>
 

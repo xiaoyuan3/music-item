@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 const Recommend = () => import('../views/recommend/Recommend')
 const Rank = () => import('../views/rank/Rank')
 const List = () => import('../views/list/List')
+const ListDetail = () => import('../views/list/ListDetail')
 // 使用组件
 Vue.use(VueRouter);
 
@@ -17,10 +18,17 @@ const routes = [
     // 推荐页面路由
     path: '/recommend',
     component: Recommend
-  },{
+  },
+  {
     // 列表页面路由
     path: '/list',
-    component: List
+    component: List,
+    children: [
+      {
+        path: ':id',
+        component: ListDetail
+      }
+    ]
   },
   {
     // 排行页面路由
