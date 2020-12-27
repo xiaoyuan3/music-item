@@ -1,49 +1,48 @@
 <template>
   <div class="list-detail">
     <h2>你好</h2>
-    <music-list :songs="songs" :id="id"></music-list>
+    <music-list :songs="songs"></music-list>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import MusicList from 'components/content/music-list/MusicList'
+import MusicList from "components/content/music-list/MusicList";
 import { mapGetters } from "vuex";
-import {getSingerDeail} from 'network/list'
+import { getSingerDeail } from "network/list";
 export default {
-  components:{
-    MusicList
+  components: {
+    MusicList,
   },
-  data(){
-    return{
-      songs:[],
-      id: ''
-    }
+  data() {
+    return {
+      songs: [],
+    };
   },
-  created(){
+  created() {
     // console.log(this.singer);
-    this.getSingerDeail()
+    this.getSingerDeail();
+    // console.log(this.songs);
+    
   },
-  computed:{
-    ...mapGetters([
-      'singer'
-    ])
+  computed: {
+    ...mapGetters(["singer"]),
   },
-  methods:{
-    getSingerDeail(){
-      if(!this.singer.id) {
-        this.$router.push('/list')
+  methods: {
+    getSingerDeail() {
+      if (!this.singer.id) {
+        this.$router.push("/list");
       }
-      getSingerDeail(this.singer.id).then(res => {
+      getSingerDeail(this.singer.id).then((res) => {
         // this.songs.push(res.data.artist)
         // console.log(res.data);
-        this.songs = res.data.artist
-        this.id = res.data.artist.id
-        console.log(this.id);
-      })
+        
+        this.songs = res.data.artist;
+        console.log(this.songs);
+      });
     },
     
-  }
+  },
 };
 </script>
 
