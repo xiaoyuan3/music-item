@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul>
-      <li v-for="(item, index) in list" :key="index" class="list1">
+      <li @click="selectItem(item, index)" v-for="(item, index) in list" :key="index" class="list1">
         <h1 class="h1">
           {{ item.name }}
         </h1>
@@ -29,7 +29,14 @@ export default {
       name: String,
     };
   },
-  created() {},
+  created() {
+  },
+  methods:{
+    selectItem(item, index){
+      console.log('xx');
+      this.$emit('select', item, index)
+    }
+  },
   computed: {
     ...mapGetters(["singer"]),
   },
@@ -53,7 +60,8 @@ ul {
   .list2 {
     // padding: 0 30px;
     color: #adadae;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 100;
   }
 }
 </style>

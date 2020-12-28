@@ -10,7 +10,7 @@
     <div class="bg-layer" ref="layer"></div>
     <scroll @scroll="scroll" class="list" ref="list">
       <div class="song-list">
-        <song-list :list="list"></song-list>
+        <song-list @select="selectItem" :list="list"></song-list>
       </div>
     </scroll>
 
@@ -22,6 +22,7 @@
 import Scroll from "components/common/scroll/Scroll";
 import SongList from "../song-list/SongList";
 import { mapGetters } from "vuex";
+import {mapActions} from "vuex"
 import { getSingerList } from "network/list";
 const RESERVED_HEIGHT = 40;
 export default {
@@ -44,6 +45,7 @@ export default {
   mounted() {
     this.imgHeight = this.$refs.bgImg.clientHeight;
     console.log(this.imgHeight);
+    // 向上滚动的高度
     this.minTranslateY = -this.imgHeight + RESERVED_HEIGHT;
     this.$refs.list.$el.style.top = `${this.imgHeight}px`;
   },
@@ -51,12 +53,9 @@ export default {
     getSingerList() {
       // console.log(this.singer.id);
       getSingerList(this.singer.id).then((res) => {
-        // console.log(res);
         res.songs.forEach((item) => {
-          // console.log(item);
           this.list.push(item);
         });
-        // console.log(this.list);
       });
     },
     scroll(position) {
@@ -64,7 +63,16 @@ export default {
     },
     backClick(){
       this.$router.back()
-    }
+    },
+    selectItem(item, index){
+      this.selectPlay({
+        list: this.list,
+        index
+      })
+    },
+    ...mapActions([
+      'selectPlay'
+    ])
   },
   computed: {
     ...mapGetters(["singer"]),
@@ -74,9 +82,10 @@ export default {
       let tranlateY = Math.max(this.minTranslateY, newval);
       let zIndex = 0;
       let scale = 1
-      //  class="bg-layer" 给scroll添加一个向上的滚动
+      //  为ref=layer 的添加css 3d属性
       this.$refs.layer.style["transform"] = `translate3d(0, ${tranlateY}px, 0)`;
       this.$refs.layer.style["webkitTransform"] = `translate3d(0, ${tranlateY}px, 0)`;
+      // Math.abs 返回一个绝对值
       const percent = Math.abs(newval/this.imgHeight)
       if(newval > 0) {
         scale = 1 + percent
@@ -84,6 +93,8 @@ export default {
       }
       var style = this.$refs.bgImg.style
       if (newval < this.minTranslateY) {
+        // console.log('我是新值'+newval);
+        // console.log(this.minTranslateY);
         zIndex = 9
         style.paddingTop = 0;
         style.height = `${RESERVED_HEIGHT}px`;

@@ -1,6 +1,5 @@
 <template>
   <div class="list-detail">
-    <h2>你好</h2>
     <music-list :songs="songs"></music-list>
     <router-view></router-view>
   </div>
@@ -38,7 +37,7 @@ export default {
         // console.log(res.data);
         
         this.songs = res.data.artist;
-        console.log(this.songs);
+        // console.log(this.songs);
       });
     },
     
