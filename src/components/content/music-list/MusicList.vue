@@ -24,6 +24,7 @@ import SongList from "../song-list/SongList";
 import { mapGetters } from "vuex";
 import {mapActions} from "vuex"
 import { getSingerList } from "network/list";
+import {getPlayer} from "network/player"
 const RESERVED_HEIGHT = 40;
 export default {
   props: {
@@ -68,6 +69,11 @@ export default {
       this.selectPlay({
         list: this.list,
         index
+      })
+      console.log(item.al.id);
+      console.log(this.list);
+      getPlayer(item.al.id).then(res => {
+        console.log(res);
       })
     },
     ...mapActions([
