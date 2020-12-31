@@ -4,6 +4,10 @@ const mutations = {
   [types.SET_SINGER](state, singer) {
     state.singer = singer
   },
+  // export const SET_MUSIC_URL = 'SET_MUSIC_URL'
+  [types.SET_MUSIC_URL](state, musicUrl) {
+    state.musicUrl = musicUrl
+  },
   [types.SET_PLAYING_STATE](state, flag) {
     state.playing = flag
   },

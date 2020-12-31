@@ -23,8 +23,9 @@ import Scroll from "components/common/scroll/Scroll";
 import SongList from "../song-list/SongList";
 import { mapGetters } from "vuex";
 import {mapActions} from "vuex"
+import {mapMutations} from 'vuex'
 import { getSingerList } from "network/list";
-import {getPlayer, getMusic} from "network/player"
+import { getMusic} from "network/player"
 const RESERVED_HEIGHT = 40;
 export default {
   props: {
@@ -57,7 +58,7 @@ export default {
         res.songs.forEach((item) => {
           this.list.push(item);
         });
-      });
+      })
     },
     scroll(position) {
       this.ScrollY = position.y;
@@ -72,16 +73,23 @@ export default {
       })
       console.log(item.id);
       console.log(this.list);
-      getPlayer(item.al.id).then(res => {
-        console.log(res);
-      })
+      
       getMusic(item.id).then(res => {
-        console.log(res);
+
+        // this.musicUrl = res.data[0].url
+        this.setMusicUrl(res.data[0].url)
+        // this.$store.commit('SET_MUSIC_URL')
+        // this.$store.dispatch('musicUrl', this.musicUrl)
+        // this.$store.commit('musicUrl',musicUrl)
+        // console.log(res.data[0].url);
       })
     },
     ...mapActions([
       'selectPlay'
-    ])
+    ]),
+    ...mapMutations({
+      setMusicUrl:'SET_MUSIC_URL'
+    })
   },
   computed: {
     ...mapGetters(["singer"]),

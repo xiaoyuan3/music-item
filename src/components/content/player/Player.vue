@@ -36,7 +36,7 @@
               <i class="iconfont icon7"></i>
             </div>
             <div class="i-center">
-              <i class="iconfont iconplay"></i>
+              <i @click="tooglePlaying" class="iconfont iconplay"></i>
             </div>
             <div>
               <i class="iconfont icon5"></i>
@@ -65,28 +65,38 @@
         </div>
       </div>
     </transition>
+    <audio ref="audio" :src="musicUrl"></audio>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import animations from "create-keyframe-animation";
-import {prefixStyle} from 'assets/js/dom'
+import { prefixStyle } from "assets/js/dom";
 
-const transform = prefixStyle('transform')
+const transform = prefixStyle("transform");
 export default {
   computed: {
-    ...mapGetters(["playlist", "fullScreen", "currentSong", "singer"]),
+    ...mapGetters([
+      "playlist",
+      "fullScreen",
+      "currentSong",
+      "singer",
+      "musicUrl",
+      "playing",
+    ]),
   },
   created() {
     console.log(this.currentSong);
     console.log(this.playlist);
     console.log(this.fullScreen);
-    console.log(this.singer);
+    // console.log(this.singer);
+    console.log(this.musicUrl);
   },
   methods: {
     ...mapMutations({
       setFullScreen: "SET_FULL_SCREEN",
+      setPlayingState: "SET_PLAYING_STATE",
     }),
     back() {
       this.setFullScreen(false);
@@ -114,7 +124,7 @@ export default {
         name: "move",
         animation,
         presets: {
-          duration: 400,
+          duration: 300,
           easing: "linear",
         },
       });
@@ -126,14 +136,16 @@ export default {
       this.$refs.cdWrapper.style.animation = "";
     },
     leave(el, done) {
-      this.$refs.cdWrapper.style.transition = 'all 0.4s'
-      const {x, y, scale} = this._getPosAndScale()
-      this.$refs.cdWrapper.style[transform] = `translate3d(${x}px, ${y}px,0) scale(${scale})`
-      this.$refs.cdWrapper.addEventListener('transitionend', done)
+      this.$refs.cdWrapper.style.transition = "all 0.4s";
+      const { x, y, scale } = this._getPosAndScale();
+      this.$refs.cdWrapper.style[
+        transform
+      ] = `translate3d(${x}px, ${y}px,0) scale(${scale})`;
+      this.$refs.cdWrapper.addEventListener("transitionend", done);
     },
     afterLeave() {
-      this.$refs.cdWrapper.style.transition = ''
-      this.$refs.cdWrapper.style[transform] = ''
+      this.$refs.cdWrapper.style.transition = "";
+      this.$refs.cdWrapper.style[transform] = "";
     },
     // 计算大图片和小图片的中心位置
     _getPosAndScale() {
@@ -150,6 +162,22 @@ export default {
         y,
         scale,
       };
+    },
+    tooglePlaying() {
+      this.setPlayingState(!this.playing);
+    },
+  },
+  watch: {
+    musicUrl() {
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+      });
+    },
+    playing(newPlaying) {
+      this.$nextTick(() => {
+        const audio = this.$refs.audio;
+        newPlaying ? audio.play() : audio.pause();
+      });
     },
   },
 };

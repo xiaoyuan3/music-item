@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "6459802",
+      "name": "pause",
+      "font_class": "pause",
+      "unicode": "e672",
+      "unicode_decimal": 58994
+    },
+    {
       "icon_id": "47676",
       "name": "music-list",
       "font_class": "icon-music-lsit",

@@ -1,6 +1,8 @@
 // 获取state做的映射
 export const singer = state => state.singer
 
+export const musicUrl = state => state.musicUrl
+
 export const playing = state => state.playing
 
 export const fullScreen = state => state.fullScreen
