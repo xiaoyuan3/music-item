@@ -9,7 +9,7 @@
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
-          <img :src="currentSong.image" alt="" />
+          <img :src="songImg" alt="" />
         </div>
         <div class="top">
           <div class="back" @click="back">
@@ -21,25 +21,33 @@
         <div class="center">
           <div>
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="e1-image">
-                <img src="~assets/image/BFQ/e1.png" alt="" />
+              <div class="e1-image" :class="cdCls">
+                <!-- <img src="~assets/image/BFQ/e1.png" alt="" /> -->
+                <img :src="songImg" alt="" />
               </div>
             </div>
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{ format(currentTime) }}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar :percent="percent"></progress-bar>
+            </div>
+            <span class="time time-r">{{ format(lastTime) }}</span>
+          </div>
           <div class="operators">
             <div class="left-left">
               <i class="iconfont iconloop"></i>
             </div>
             <div>
-              <i class="iconfont icon7"></i>
+              <i @click="prev" :class="disableCls" class="iconfont icon7"></i>
             </div>
             <div class="i-center">
-              <i @click="tooglePlaying" class="iconfont iconplay"></i>
+              <i @click="tooglePlaying" :class="playIcon"></i>
             </div>
             <div>
-              <i class="iconfont icon5"></i>
+              <i @click="next" :class="disableCls" class="iconfont icon5"></i>
             </div>
             <div>
               <i class="iconfont iconiconhomecollection_"></i>
@@ -51,52 +59,67 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <img src="~assets/image/BFQ/e1.png" alt="" />
+          <img :class="cdCls" :src="songImg" alt="" />
         </div>
         <div class="text">
           <h2 v-html="currentSong.name"></h2>
           <p v-html="singer.name"></p>
         </div>
-        <div class="control">
-          <i></i>
+        <div class="mini-control">
+          <i @click.stop="tooglePlaying" :class="playIcon"></i>
         </div>
         <div class="mini-right">
           <i class="iconfont iconicon-music-lsit"></i>
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="musicUrl"></audio>
+    <audio
+      ref="audio"
+      @timeupdate="updateTime"
+      :src="musicUrl"
+      @canplay="ready"
+      @error="error"
+    ></audio>
+
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
 import animations from "create-keyframe-animation";
+import ProgressBar from "../progress-bar/progress-bar.vue";
+import { mapGetters, mapMutations } from "vuex";
 import { prefixStyle } from "assets/js/dom";
+import { getMusic, getSongDetail } from "network/player";
 
 const transform = prefixStyle("transform");
 export default {
-  computed: {
-    ...mapGetters([
-      "playlist",
-      "fullScreen",
-      "currentSong",
-      "singer",
-      "musicUrl",
-      "playing",
-    ]),
+  components: {
+    ProgressBar,
   },
+  data() {
+    return {
+      songReady: false,
+      currentTime: 0,
+    };
+  },
+  beforeCreate() {},
   created() {
     console.log(this.currentSong);
     console.log(this.playlist);
     console.log(this.fullScreen);
-    // console.log(this.singer);
-    console.log(this.musicUrl);
+    console.log(this.singer);
+    // console.log(this.musicUrl);
+    console.log(this.lastTime);
   },
   methods: {
     ...mapMutations({
       setFullScreen: "SET_FULL_SCREEN",
       setPlayingState: "SET_PLAYING_STATE",
+      setCurrentIndex: "SET_CURRENT_INDEX",
+      setMusicUrl: "SET_MUSIC_URL",
+      setSongImg: "SET_SONG_IMG",
+      setLastTime: "SET_LAST_TIME",
     }),
     back() {
       this.setFullScreen(false);
@@ -153,7 +176,7 @@ export default {
       const paddingLeft = 60;
       const paddingBottom = 30;
       const paddingTop = 120;
-      const width = 120;
+      const width = 220;
       const scale = targetWith / width;
       const x = -(window.innerWidth / 2 - paddingLeft);
       const y = window.innerHeight - paddingTop - width / 2 - paddingBottom;
@@ -164,13 +187,108 @@ export default {
       };
     },
     tooglePlaying() {
+      if (!this.songReady) {
+        return;
+      }
       this.setPlayingState(!this.playing);
     },
+    prev() {
+      if (!this.songReady) {
+        return;
+      }
+      let index = this.currentIndex - 1;
+      if (index === -1) {
+        index = this.playlist.length - 1;
+      }
+      this.setCurrentIndex(index);
+      this.getMusic();
+      if (!this.playing) {
+        this.tooglePlaying();
+      }
+      this.songReady = false;
+    },
+    next() {
+      if (!this.songReady) {
+        return;
+      }
+      let index = this.currentIndex + 1;
+      if (index === this.playlist.length) {
+        index = 0;
+      }
+      this.setCurrentIndex(index);
+      console.log(index);
+      console.log(this.currentSong.id);
+      this.getMusic();
+      if (!this.playing) {
+        this.tooglePlaying();
+      }
+      this.songReady = false;
+    },
+    ready() {
+      this.songReady = true;
+    },
+    error() {
+      this.songReady = true;
+    },
+    updateTime(e) {
+      this.currentTime = e.target.currentTime;
+    },
+    format(interval) {
+      interval = interval | 0;
+      const minute = (interval / 60) | 0;
+      let second = interval % 60;
+      if (second < 10) {
+        second = "0" + second;
+      } else {
+        second = second;
+      }
+      return `${minute}:${second}`;
+    },
+    getMusic() {
+      getMusic(this.currentSong.id).then((res) => {
+        this.setMusicUrl(res.data[0].url);
+      });
+      this.getSongDetail();
+    },
+    getSongDetail() {
+      getSongDetail(this.currentSong.id).then((res) => {
+        const songs = res.songs[0];
+        this.setSongImg(songs.al.picUrl);
+        console.log(songs.al.picUrl); //dt是总时长
+        const time = songs.dt / 1000;
+        this.setLastTime(time);
+      });
+    },
+  },
+  computed: {
+    ...mapGetters([
+      "playlist",
+      "fullScreen",
+      "currentSong",
+      "singer",
+      "musicUrl",
+      "playing",
+      "currentIndex",
+      "songImg",
+      "lastTime",
+    ]),
+    playIcon() {
+      return this.playing ? "iconfont iconpasue-min-gray" : "iconfont iconplay";
+    },
+    cdCls() {
+      return this.playing ? "play" : "play pause";
+    },
+    disableCls(){
+      return this.songReady ? '' : 'disable'
+    },
+    percent() {
+      return this.currentTime / this.lastTime
+    }
   },
   watch: {
     musicUrl() {
       this.$nextTick(() => {
-        this.$refs.audio.play()
+        this.$refs.audio.play();
       });
     },
     playing(newPlaying) {
@@ -197,10 +315,16 @@ export default {
     background-color: #fff;
     .background {
       position: absolute;
-      top: 0;
+      // top: -33%; 
+      top: -0;
       right: 0;
+      // left: -150%;
       left: 0;
       bottom: 0;
+      img{
+        -webkit-filter: blur(90px);  
+        filter: blur(90px);  
+      }
     }
     .top {
       position: relative;
@@ -229,21 +353,54 @@ export default {
     }
     .center {
       .e1-image {
+        // width: calc(100% - 0.2px);
         position: fixed;
-        top: 120px;
-        left: 50%;
+        top: calc(50% - 240px);
+        left: calc(50% - 120px);
         // width: 100%;
-        transform: translate(-50%);
+        // transform: translateX(-50%);
+
         img {
           width: 240px;
           height: 240px;
+          background-color: red;
+          border-radius: 50%;
         }
+      }
+      .play {
+        animation: rotate 20s linear infinite;
+      }
+      .pause {
+        animation-play-state: paused;
       }
     }
     .bottom {
       position: absolute;
       bottom: 30px;
       width: 100%;
+      .progress-wrapper {
+        display: flex;
+        align-items: center;
+        width: 80%;
+        margin: 0px auto;
+        padding: 10px 0;
+        .time {
+          flex: 0 0 30px;
+          line-height: 30px;
+          width: 30px;
+          margin: 0 10px;
+          color: #000;
+        }
+        .time-l {
+          text-align: left;
+        }
+        .time-r {
+          text-align: right;
+        }
+        .progress-bar-wrapper {
+          flex: 1;
+        }
+      }
       .operators {
         display: flex;
         align-items: center;
@@ -293,14 +450,24 @@ export default {
     height: 60px;
     z-index: 199;
     background-color: red;
+
     .icon {
-      padding: 0 10px 0 20px;
+      padding: 5px 10px 0 20px;
       img {
         width: 40px;
         height: 40px;
+        // border-radius: 50%;
+        background-color: #fff;
         border-radius: 50%;
       }
+      .play {
+        animation: rotate 20s linear infinite;
+      }
+      .pause {
+        animation-play-state: paused;
+      }
     }
+
     .text {
       display: flex;
       flex-direction: column;
@@ -316,6 +483,13 @@ export default {
         font-size: 14px;
       }
     }
+    .mini-control {
+      position: fixed;
+      right: 17%;
+      i {
+        font-size: 34px;
+      }
+    }
     .mini-right {
       position: fixed;
       right: 0;
@@ -324,6 +498,14 @@ export default {
         font-size: 30px;
       }
     }
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

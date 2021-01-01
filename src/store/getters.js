@@ -1,6 +1,10 @@
 // 获取state做的映射
 export const singer = state => state.singer
 
+export const songImg = state => state.songImg
+
+export const lastTime = state => state.lastTime
+
 export const musicUrl = state => state.musicUrl
 
 export const playing = state => state.playing

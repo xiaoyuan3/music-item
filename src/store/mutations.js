@@ -8,6 +8,12 @@ const mutations = {
   [types.SET_MUSIC_URL](state, musicUrl) {
     state.musicUrl = musicUrl
   },
+  [types.SET_SONG_IMG](state, songImg) {
+    state.songImg = songImg
+  },
+  [types.SET_LAST_TIME](state, lastTime) {
+    state.lastTime = lastTime
+  },
   [types.SET_PLAYING_STATE](state, flag) {
     state.playing = flag
   },

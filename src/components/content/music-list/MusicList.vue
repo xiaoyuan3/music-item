@@ -22,10 +22,10 @@
 import Scroll from "components/common/scroll/Scroll";
 import SongList from "../song-list/SongList";
 import { mapGetters } from "vuex";
-import {mapActions} from "vuex"
-import {mapMutations} from 'vuex'
+import { mapActions } from "vuex";
+import { mapMutations } from "vuex";
 import { getSingerList } from "network/list";
-import { getMusic} from "network/player"
+import { getMusic,getSongDetail } from "network/player";
 const RESERVED_HEIGHT = 40;
 export default {
   props: {
@@ -58,61 +58,66 @@ export default {
         res.songs.forEach((item) => {
           this.list.push(item);
         });
-      })
+      });
     },
     scroll(position) {
       this.ScrollY = position.y;
     },
-    backClick(){
-      this.$router.back()
+    backClick() {
+      this.$router.back();
     },
-    selectItem(item, index){
+    selectItem(item, index) {
       this.selectPlay({
         list: this.list,
-        index
-      })
+        index,
+      });
       console.log(item.id);
       console.log(this.list);
-      
-      getMusic(item.id).then(res => {
 
-        // this.musicUrl = res.data[0].url
-        this.setMusicUrl(res.data[0].url)
-        // this.$store.commit('SET_MUSIC_URL')
-        // this.$store.dispatch('musicUrl', this.musicUrl)
-        // this.$store.commit('musicUrl',musicUrl)
-        // console.log(res.data[0].url);
-      })
+      getMusic(item.id).then((res) => {
+        this.setMusicUrl(res.data[0].url);
+        console.log(res);
+      });
+      getSongDetail(this.currentSong.id).then((res) => {
+        
+        const songs = res.songs[0];
+        // songDetail.lastTime = songs.dt
+        this.setSongImg(songs.al.picUrl)
+        const time = songs.dt / 1000
+        this.setLastTime(time)
+      });
     },
-    ...mapActions([
-      'selectPlay'
-    ]),
+    ...mapActions(["selectPlay"]),
     ...mapMutations({
-      setMusicUrl:'SET_MUSIC_URL'
-    })
+      setMusicUrl: "SET_MUSIC_URL",
+      setSongImg: "SET_SONG_IMG",
+      setLastTime: "SET_LAST_TIME"
+    }),
   },
   computed: {
-    ...mapGetters(["singer"]),
+    ...mapGetters(["singer", "currentSong"]),
   },
   watch: {
     ScrollY(newval) {
       let tranlateY = Math.max(this.minTranslateY, newval);
       let zIndex = 0;
-      let scale = 1
+      let scale = 1;
       //  为ref=layer 的添加css 3d属性
       this.$refs.layer.style["transform"] = `translate3d(0, ${tranlateY}px, 0)`;
-      this.$refs.layer.style["webkitTransform"] = `translate3d(0, ${tranlateY}px, 0)`;
+      this.$refs.layer.style[
+        "webkitTransform"
+      ] = `translate3d(0, ${tranlateY}px, 0)`;
       // Math.abs 返回一个绝对值
-      const percent = Math.abs(newval/this.imgHeight)
-      if(newval > 0) {
-        scale = 1 + percent
-        zIndex = 10
+      const percent = Math.abs(newval / this.imgHeight);
+      if (newval > 0) {
+        scale = 1 + percent;
+        zIndex = 10;
       }
-      var style = this.$refs.bgImg.style
+      var style = this.$refs.bgImg.style;
       if (newval < this.minTranslateY) {
         // console.log('我是新值'+newval);
         // console.log(this.minTranslateY);
-        zIndex = 9
+        zIndex = 9;
         style.paddingTop = 0;
         style.height = `${RESERVED_HEIGHT}px`;
         // this.$refs.bgImg.style.zIndex= 10
@@ -120,9 +125,9 @@ export default {
         style.paddingTop = "75%";
         style.height = 0;
         // this.$refs.bgImg.style.zIndex= 0
-        zIndex = 0
+        zIndex = 0;
       }
-      style.zIndex = zIndex
+      style.zIndex = zIndex;
       // this.$refs.img.style.zIndex = zIndex;
       style["transform"] = `scale(${scale})`;
       style["webkitTransform"] = `scale(${scale})`;

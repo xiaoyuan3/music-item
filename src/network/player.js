@@ -20,11 +20,11 @@ export function getMusic(id) {
 }
 // /playlist/cover/update
 
-export function getMusicList(id) {
+export function getSongDetail(ids) {
   return request({
-    url: '/song/url',
+    url: '/song/detail',
     params: {
-      id
+      ids
     }
   })
 }
