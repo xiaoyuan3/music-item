@@ -19,12 +19,21 @@ export function getMusic(id) {
   })
 }
 // /playlist/cover/update
-
+// 获取时长
 export function getSongDetail(ids) {
   return request({
     url: '/song/detail',
     params: {
       ids
+    }
+  })
+}
+// 获取歌词
+export function getSongWords(id) {
+  return request({
+    url: '/lyric',
+    params: {
+      id
     }
   })
 }

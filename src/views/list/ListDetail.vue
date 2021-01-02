@@ -33,11 +33,7 @@ export default {
         this.$router.push("/list");
       }
       getSingerDeail(this.singer.id).then((res) => {
-        // this.songs.push(res.data.artist)
-        // console.log(res.data);
-        
         this.songs = res.data.artist;
-        // console.log(this.songs);
       });
     },
     

@@ -32,13 +32,14 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{ format(currentTime) }}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :percent="percent"></progress-bar>
+              <progress-bar :percent="percent" @percentChange="onPercentChange"></progress-bar>
             </div>
             <span class="time time-r">{{ format(lastTime) }}</span>
           </div>
           <div class="operators">
-            <div class="left-left">
-              <i class="iconfont iconloop"></i>
+            <div class="left-left" @click="changeMode">
+              <!-- <i :class="iconfont iconloop"></i> -->
+              <i :class="iconMode"></i>
             </div>
             <div>
               <i @click="prev" :class="disableCls" class="iconfont icon7"></i>
@@ -66,7 +67,9 @@
           <p v-html="singer.name"></p>
         </div>
         <div class="mini-control">
-          <i @click.stop="tooglePlaying" :class="playIcon"></i>
+          <progress-circle>
+            <i @click.stop="tooglePlaying" class="icon-mini" :class="playIcon"></i>
+          </progress-circle>
         </div>
         <div class="mini-right">
           <i class="iconfont iconicon-music-lsit"></i>
@@ -79,6 +82,7 @@
       :src="musicUrl"
       @canplay="ready"
       @error="error"
+      @ended="end"
     ></audio>
 
     <router-view></router-view>
@@ -88,19 +92,25 @@
 <script>
 import animations from "create-keyframe-animation";
 import ProgressBar from "../progress-bar/progress-bar.vue";
+import ProgressCircle from "../progress-circle/progress-circle"
+import Lyric from 'lyric-parser'
 import { mapGetters, mapMutations } from "vuex";
 import { prefixStyle } from "assets/js/dom";
-import { getMusic, getSongDetail } from "network/player";
+import { getMusic, getSongDetail,getSongWords } from "network/player";
+import {playMode} from "assets/js/config"
+import {shuffle} from "assets/js/util"
 
 const transform = prefixStyle("transform");
 export default {
   components: {
     ProgressBar,
+    ProgressCircle
   },
   data() {
     return {
       songReady: false,
       currentTime: 0,
+      currentLyric: null
     };
   },
   beforeCreate() {},
@@ -108,9 +118,11 @@ export default {
     console.log(this.currentSong);
     console.log(this.playlist);
     console.log(this.fullScreen);
-    console.log(this.singer);
+    // console.log(this.singer);
     // console.log(this.musicUrl);
     console.log(this.lastTime);
+    console.log(this.currentSong);
+    // console.log(this.words);
   },
   methods: {
     ...mapMutations({
@@ -120,6 +132,8 @@ export default {
       setMusicUrl: "SET_MUSIC_URL",
       setSongImg: "SET_SONG_IMG",
       setLastTime: "SET_LAST_TIME",
+      setPlayMode: "SET_PLAY_MODE",
+      setPlayList: "SET_PLAYLIST"
     }),
     back() {
       this.setFullScreen(false);
@@ -127,9 +141,9 @@ export default {
     open() {
       this.setFullScreen(true);
     },
+    // enter afterEnter leave afterLeave 是设置大图小图css属性
     enter(el, done) {
       const { x, y, scale } = this._getPosAndScale();
-
       let animation = {
         0: {
           transform: `translate3d(${x}px, ${y}px,0) scale(${scale})`,
@@ -142,7 +156,6 @@ export default {
           transform: `translate3d(0,-85px,0) scale(1.0)`,
         },
       };
-
       animations.registerAnimation({
         name: "move",
         animation,
@@ -151,7 +164,6 @@ export default {
           easing: "linear",
         },
       });
-
       animations.runAnimation(this.$refs.cdWrapper, "move", done);
     },
     afterEnter() {
@@ -186,6 +198,7 @@ export default {
         scale,
       };
     },
+    // 
     tooglePlaying() {
       if (!this.songReady) {
         return;
@@ -207,6 +220,10 @@ export default {
       }
       this.songReady = false;
     },
+    loop() {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
+    },
     next() {
       if (!this.songReady) {
         return;
@@ -216,7 +233,7 @@ export default {
         index = 0;
       }
       this.setCurrentIndex(index);
-      console.log(index);
+      // console.log(index);
       console.log(this.currentSong.id);
       this.getMusic();
       if (!this.playing) {
@@ -224,15 +241,24 @@ export default {
       }
       this.songReady = false;
     },
+    // audio的监听事件
+    updateTime(e) {
+      this.currentTime = e.target.currentTime;
+    },
+    end(){
+      if(this.mode === playMode.loop){
+        this.loop()
+      }else{
+        this.next()
+      }
+    },
     ready() {
       this.songReady = true;
     },
     error() {
       this.songReady = true;
     },
-    updateTime(e) {
-      this.currentTime = e.target.currentTime;
-    },
+    // 播放开始时间
     format(interval) {
       interval = interval | 0;
       const minute = (interval / 60) | 0;
@@ -244,6 +270,7 @@ export default {
       }
       return `${minute}:${second}`;
     },
+    // 获取音乐
     getMusic() {
       getMusic(this.currentSong.id).then((res) => {
         this.setMusicUrl(res.data[0].url);
@@ -259,6 +286,40 @@ export default {
         this.setLastTime(time);
       });
     },
+    onPercentChange(percent) {
+      this.$refs.audio.currentTime = this.lastTime * percent
+      if(!this.playing) {
+        this.tooglePlaying()
+      }
+    },
+    // 循环 随机 单循环
+    changeMode(){
+      
+      const mode = (this.mode + 1) % 3
+      console.log(mode);
+      this.setPlayMode(mode)
+      let list = null
+      if(mode === playMode.random) {
+        list = shuffle(this.sequenceList)
+      }else {
+        list = this.sequenceList
+      }
+      this.resetCurrentIndex(list)
+      this.setPlayList(list)
+    },
+    resetCurrentIndex(list) {
+      let index = list.findIndex(item => {
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentIndex(index)
+    },
+    // 获取歌词
+    getLyric(){
+      getSongWords(this.currentSong.id).then(res => {
+        this.currentLyric = new Lyric(res.lrc.lyric)
+        console.log(this.currentLyric);
+      })
+    }
   },
   computed: {
     ...mapGetters([
@@ -271,9 +332,15 @@ export default {
       "currentIndex",
       "songImg",
       "lastTime",
+      "mode",
+      "sequenceList",
+      "words"
     ]),
     playIcon() {
       return this.playing ? "iconfont iconpasue-min-gray" : "iconfont iconplay";
+    },
+    iconMode(){
+      return this.mode === playMode.sequence ? "iconfont iconloop" : this.mode=== playMode.loop ? "iconfont iconloop2": "iconfont iconicon_random"
     },
     cdCls() {
       return this.playing ? "play" : "play pause";
@@ -286,9 +353,10 @@ export default {
     }
   },
   watch: {
-    musicUrl() {
+    musicUrl(newSong, oldSong) {
       this.$nextTick(() => {
         this.$refs.audio.play();
+        this.getLyric()
       });
     },
     playing(newPlaying) {
@@ -489,6 +557,12 @@ export default {
       i {
         font-size: 34px;
       }
+      // .icon-mini{
+      //   font-size: 34px;
+      //   position: absolute;
+      //   left: 0;
+      //   top: 0;
+      // }
     }
     .mini-right {
       position: fixed;

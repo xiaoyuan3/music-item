@@ -25,7 +25,7 @@ import { mapGetters } from "vuex";
 import { mapActions } from "vuex";
 import { mapMutations } from "vuex";
 import { getSingerList } from "network/list";
-import { getMusic,getSongDetail } from "network/player";
+import { getMusic,getSongDetail,getSongWords } from "network/player";
 const RESERVED_HEIGHT = 40;
 export default {
   props: {
@@ -76,12 +76,11 @@ export default {
 
       getMusic(item.id).then((res) => {
         this.setMusicUrl(res.data[0].url);
-        console.log(res);
+        // console.log(res);
       });
       getSongDetail(this.currentSong.id).then((res) => {
         
         const songs = res.songs[0];
-        // songDetail.lastTime = songs.dt
         this.setSongImg(songs.al.picUrl)
         const time = songs.dt / 1000
         this.setLastTime(time)
@@ -91,7 +90,8 @@ export default {
     ...mapMutations({
       setMusicUrl: "SET_MUSIC_URL",
       setSongImg: "SET_SONG_IMG",
-      setLastTime: "SET_LAST_TIME"
+      setLastTime: "SET_LAST_TIME",
+      setWords:"SET_WORDS"
     }),
   },
   computed: {

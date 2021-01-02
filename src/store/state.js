@@ -4,7 +4,7 @@ import {playMode} from 'assets/js/config'
 const state = {
   singer: {},
   songImg: "",
-  lastTime:"",
+  lastTime: "",
   musicUrl: "",
   playing: false,
   fullScreen: false,
