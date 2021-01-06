@@ -11,19 +11,6 @@
         </ul>
       </li>
     </ul>
-
-    <!-- <div>
-      <ul class="list-new">
-        <li
-          v-for="(item, index) in shortcutList"
-          :key="index"
-          class="list-point"
-          
-        >
-          {{ item }}
-        </li>
-      </ul>
-    </div> -->
   </div>
 </template>
 
@@ -65,9 +52,7 @@ ul {
     list-style: none;
     .group-title {
       width: 100%;
-      // margin-bottom: 5px;
       margin: 0px;
-      // padding: 0 10px;
       font-size: 12px;
       padding: 5px 0 5px 15px;
       background-color: #f8f8f8;
@@ -90,16 +75,12 @@ ul {
             margin: 25px 0 0 25px;
             display: inline-block;
             font-size: 13px;
-            // padding: ;
           }
         }
       }
     }
   }
   .list-new {
-    // position: absolute;
-    // top: 50%;
-    // right: 5px;
     position: absolute;
     right: 0;
     top: 78px;

@@ -1,15 +1,18 @@
 <template>
   <div class="rencommend">
-    <scroll class="content">
-      <recommend-swiper :banners="banners"></recommend-swiper>
-      <recommend-person :result="result"></recommend-person>
+    <scroll class="content" ref="scroll" :probe-type="3">
+      <div>
+        <recommend-swiper :banners="banners"></recommend-swiper>
+        <recommend-person @selectItem="selectItem" :result="result"></recommend-person>
+      </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 // 公共组件
-import { getRecommendBanner, getRecommendPerson} from "network/recommend";
+import { getRecommendBanner, getRecommendPerson } from "network/recommend";
 import Scroll from "components/common/scroll/Scroll";
 // 子组件
 import RecommendSwiper from "./childComps/RecommendSwiper";
@@ -32,6 +35,11 @@ export default {
     this.getRecommendBanner();
     this.getRecommendPerson();
   },
+  mounted() {
+    setTimeout(() => {
+      this.$refs.scroll.refresh();
+    }, 20);
+  },
   methods: {
     getRecommendBanner() {
       // 轮播图的 axios的网络请求 返回ppromise
@@ -44,11 +52,15 @@ export default {
     getRecommendPerson() {
       // 推荐歌单中的网络请求
       getRecommendPerson().then((res) => {
-        // console.log(res.result);
+        console.log(res.result);
         this.result = res.result;
       });
     },
-    
+    selectItem(item){
+      this.$router.push({
+        path: `/recommend/${item.id}`,
+      });
+    }
   },
 };
 </script>
@@ -56,12 +68,13 @@ export default {
 <style lang="less" scoped>
 .rencommend {
   margin-top: 79px;
-}
-.content {
-  position: absolute;
-  top: 78px;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  height: calc(100% - 79);
+  .content {
+    position: absolute;
+    top: 78px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 }
 </style>

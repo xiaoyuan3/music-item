@@ -18,11 +18,11 @@ export default {
     // 3： 在只要是滚动，都侦测
     probeType: {
       type: Number,
-      default: 3,
+      default: 0,
     },
-    pullUpLoad: {
-      type: Boolean,
-      default: true,
+    data: {
+      type: Array,
+      default: null,
     },
     // listenScroll:{
     //   type:Boolean,
@@ -46,32 +46,17 @@ export default {
       scrollbar: true,
       click: true,
       probeType: this.probeType,
-      pullUpLoad: this.pullUpLoad,
+      mouseWheel: true,
     });
     // 监听滚动的位置
     // if (true) {
-      // let me = this;
-      // console.log(me);
-      this.scroll.on("scroll", (position) => {
-        // console.log(position);
-        // this.$emit("scrollView",position)
-        this.$emit("scroll", position);
-      });
+    this.scroll.on("scroll", (position) => {
+      this.$emit("scroll", position);
+    });
     // }
-
-    // 监听scroll滚动到底部  pullingUp 上拉事件
-    if (this.pullUpLoad) {
-      this.scroll.on("pullingUp", () => {
-        // 判断是否需要加载
-        if (!this.pullingUpOver) {
-          this.$emit("pullingUp");
-        }
-      });
-    }
   },
   methods: {
     refresh() {
-      // console.log('---');
       this.scroll && this.scroll.refresh();
     },
     finishPullUp() {
@@ -85,6 +70,13 @@ export default {
     },
     scrollToElement() {
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
+    },
+  },
+  watch: {
+    data() {
+      setTimeout(() => {
+        this.refresh();
+      }, 20);
     },
   },
 };

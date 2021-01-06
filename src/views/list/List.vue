@@ -4,7 +4,7 @@
     <div class="list-fixed" v-show="fixedTitle" ref="fixed">
       <p class="fixed-title">{{ fixedTitle }}</p>
     </div>
-    <scroll @scroll="scroll" class="list-content" ref="scroll">
+    <scroll :probe-type="3" @scroll="scroll" class="list-content" ref="scroll">
       <list-view
         class="list-view"
         ref="listView"
@@ -68,9 +68,15 @@ export default {
     this.touch = {};
     this.listHeight = [];
   },
+  mounted(){
+    setTimeout(() => {
+      this.$refs.scroll.refresh()
+    }, 20);
+    
+  },
   methods: {
     selectSinger(singer) {
-      console.log(singer.id);
+      // console.log(singer.id);
       this.$router.push({
         path: `/list/${singer.id}`,
       });
@@ -101,7 +107,7 @@ export default {
       this.listHeight = [];
       const listView = this.$refs.listView;
       const list = listView.$refs.listGroup;
-      console.log(list);
+      // console.log(list);
       let height = 0;
       this.listHeight.push(height);
       for (let i = 0; i < list.length; i++) {
@@ -205,7 +211,7 @@ export default {
       if (this.scrollY > 0) {
         return "";
       }
-      console.log(this.artists);
+      // console.log(this.artists);
       return this.artists[this.currentIndex]
         ? this.artists[this.currentIndex].title
         : "";
@@ -221,8 +227,10 @@ ul {
   padding: 0;
 }
 .list {
+  height: 100vh;
   .list-content {
-    position: fixed;
+    overflow: hidden;
+    position: absolute;
     top: 78px;
     bottom: 0;
     left: 0;

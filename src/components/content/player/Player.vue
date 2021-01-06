@@ -18,21 +18,59 @@
           <h1 class="title" v-html="currentSong.name"></h1>
           <h2 class="subtitle" v-html="singer.name"></h2>
         </div>
-        <div class="center">
-          <div>
+        <div
+          class="center"
+          @touchstart.prevent="middleTouchStart"
+          @touchmove.prevent="middleTouchMove"
+          @touchend="middleTouchEnd"
+        >
+          <div class="center-l" ref="centerL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="e1-image" :class="cdCls">
                 <!-- <img src="~assets/image/BFQ/e1.png" alt="" /> -->
                 <img :src="songImg" alt="" />
               </div>
             </div>
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{ playingLyric }}</div>
+            </div>
           </div>
+          <scroll
+            class="center-r"
+            :probe-type="3"
+            ref="lyricList"
+            :data="currentLyric && currentLyric.lines"
+          >
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p
+                  ref="lyricLine"
+                  class="text"
+                  v-for="(line, index) in currentLyric.lines"
+                  :key="index"
+                  :class="{ current: currentLineNum === index }"
+                >
+                  {{ line.txt }}
+                </p>
+              </div>
+            </div>
+          </scroll>
         </div>
         <div class="bottom">
+          <div class="dot-wrapper">
+            <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
+            <span
+              class="dot"
+              :class="{ active: currentShow === 'lyric' }"
+            ></span>
+          </div>
           <div class="progress-wrapper">
             <span class="time time-l">{{ format(currentTime) }}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :percent="percent" @percentChange="onPercentChange"></progress-bar>
+              <progress-bar
+                :percent="percent"
+                @percentChange="onPercentChange"
+              ></progress-bar>
             </div>
             <span class="time time-r">{{ format(lastTime) }}</span>
           </div>
@@ -68,7 +106,11 @@
         </div>
         <div class="mini-control">
           <progress-circle>
-            <i @click.stop="tooglePlaying" class="icon-mini" :class="playIcon"></i>
+            <i
+              @click.stop="tooglePlaying"
+              class="icon-mini"
+              :class="playIcon"
+            ></i>
           </progress-circle>
         </div>
         <div class="mini-right">
@@ -92,37 +134,40 @@
 <script>
 import animations from "create-keyframe-animation";
 import ProgressBar from "../progress-bar/progress-bar.vue";
-import ProgressCircle from "../progress-circle/progress-circle"
-import Lyric from 'lyric-parser'
+import ProgressCircle from "../progress-circle/progress-circle";
+import Lyric from "lyric-parser";
 import { mapGetters, mapMutations } from "vuex";
 import { prefixStyle } from "assets/js/dom";
-import { getMusic, getSongDetail,getSongWords } from "network/player";
-import {playMode} from "assets/js/config"
-import {shuffle} from "assets/js/util"
+import { getMusic, getSongDetail, getSongWords } from "network/player";
+import { playMode } from "assets/js/config";
+import { shuffle } from "assets/js/util";
+import Scroll from "components/common/scroll/Scroll";
 
 const transform = prefixStyle("transform");
+const transitionDuration = prefixStyle("transitionDuration");
 export default {
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll,
   },
   data() {
     return {
       songReady: false,
       currentTime: 0,
-      currentLyric: null
+      currentLyric: null,
+      currentLineNum: 0,
+      currentShow: "cd",
+      playingLyric: "",
     };
   },
-  beforeCreate() {},
   created() {
-    console.log(this.currentSong);
-    console.log(this.playlist);
-    console.log(this.fullScreen);
-    // console.log(this.singer);
-    // console.log(this.musicUrl);
-    console.log(this.lastTime);
-    console.log(this.currentSong);
-    // console.log(this.words);
+    this.touch = {};
+  },
+  mounted(){
+    setTimeout(() => {
+      this.$refs.lyricList.refresh()
+    }, 20);
   },
   methods: {
     ...mapMutations({
@@ -133,7 +178,7 @@ export default {
       setSongImg: "SET_SONG_IMG",
       setLastTime: "SET_LAST_TIME",
       setPlayMode: "SET_PLAY_MODE",
-      setPlayList: "SET_PLAYLIST"
+      setPlayList: "SET_PLAYLIST",
     }),
     back() {
       this.setFullScreen(false);
@@ -198,46 +243,60 @@ export default {
         scale,
       };
     },
-    // 
+    //
     tooglePlaying() {
       if (!this.songReady) {
         return;
       }
       this.setPlayingState(!this.playing);
+      if (this.currentLyric) {
+        this.currentLyric.togglePlay();
+      }
     },
     prev() {
       if (!this.songReady) {
         return;
       }
-      let index = this.currentIndex - 1;
-      if (index === -1) {
-        index = this.playlist.length - 1;
-      }
-      this.setCurrentIndex(index);
-      this.getMusic();
-      if (!this.playing) {
-        this.tooglePlaying();
+      if (this.playlist.length === 1) {
+        this.loop();
+      } else {
+        let index = this.currentIndex - 1;
+        if (index === -1) {
+          index = this.playlist.length - 1;
+        }
+        this.setCurrentIndex(index);
+        this.getMusic();
+        if (!this.playing) {
+          this.tooglePlaying();
+        }
       }
       this.songReady = false;
     },
     loop() {
-      this.$refs.audio.currentTime = 0
-      this.$refs.audio.play()
+      this.$refs.audio.currentTime = 0;
+      this.$refs.audio.play();
+      if (this.currentLyric) {
+        this.currentLyric.seek(0);
+      }
     },
     next() {
       if (!this.songReady) {
         return;
       }
-      let index = this.currentIndex + 1;
-      if (index === this.playlist.length) {
-        index = 0;
-      }
-      this.setCurrentIndex(index);
-      // console.log(index);
-      console.log(this.currentSong.id);
-      this.getMusic();
-      if (!this.playing) {
-        this.tooglePlaying();
+      if (this.playlist.length === 1) {
+        this.loop();
+      } else {
+        let index = this.currentIndex + 1;
+        if (index === this.playlist.length) {
+          index = 0;
+        }
+        this.setCurrentIndex(index);
+        // console.log(index);
+        console.log(this.currentSong.id);
+        this.getMusic();
+        if (!this.playing) {
+          this.tooglePlaying();
+        }
       }
       this.songReady = false;
     },
@@ -245,11 +304,11 @@ export default {
     updateTime(e) {
       this.currentTime = e.target.currentTime;
     },
-    end(){
-      if(this.mode === playMode.loop){
-        this.loop()
-      }else{
-        this.next()
+    end() {
+      if (this.mode === playMode.loop) {
+        this.loop();
+      } else {
+        this.next();
       }
     },
     ready() {
@@ -287,39 +346,127 @@ export default {
       });
     },
     onPercentChange(percent) {
-      this.$refs.audio.currentTime = this.lastTime * percent
-      if(!this.playing) {
-        this.tooglePlaying()
+      const currentNew = this.lastTime * percent;
+      this.$refs.audio.currentTime = currentNew;
+      if (!this.playing) {
+        this.tooglePlaying();
+      }
+      if (this.currentLyric) {
+        this.currentLyric.seek(currentNew * 1000);
       }
     },
     // 循环 随机 单循环
-    changeMode(){
-      
-      const mode = (this.mode + 1) % 3
+    changeMode() {
+      const mode = (this.mode + 1) % 3;
       console.log(mode);
-      this.setPlayMode(mode)
-      let list = null
-      if(mode === playMode.random) {
-        list = shuffle(this.sequenceList)
-      }else {
-        list = this.sequenceList
+      this.setPlayMode(mode);
+      let list = null;
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList);
+      } else {
+        list = this.sequenceList;
       }
-      this.resetCurrentIndex(list)
-      this.setPlayList(list)
+      this.resetCurrentIndex(list);
+      this.setPlayList(list);
     },
     resetCurrentIndex(list) {
-      let index = list.findIndex(item => {
-        return item.id === this.currentSong.id
-      })
-      this.setCurrentIndex(index)
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id;
+      });
+      this.setCurrentIndex(index);
     },
     // 获取歌词
-    getLyric(){
-      getSongWords(this.currentSong.id).then(res => {
-        this.currentLyric = new Lyric(res.lrc.lyric)
-        console.log(this.currentLyric);
-      })
-    }
+    getLyric() {
+      getSongWords(this.currentSong.id)
+        .then((res) => {
+          console.log(res);
+          this.currentLyric = new Lyric(res.lrc.lyric, this.handleLyric);
+          if (this.playing) {
+            this.currentLyric.play();
+          }
+        })
+        .catch(() => {
+          this.currentLyric = null;
+          this.playingLyric = "";
+          this.currentLineNum = 0;
+        });
+    },
+    handleLyric({ lineNum, txt }) {
+      this.currentLineNum = lineNum;
+      if (lineNum > 5) {
+        let lineEl = this.$refs.lyricLine[lineNum - 5];
+        this.$refs.lyricList.scrollToElement(lineEl, 1000);
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000);
+      }
+      this.playingLyric = txt;
+    },
+    middleTouchStart(e) {
+      console.log(e);
+      this.touch.initiated = true;
+      const touch = e.touches[0];
+      this.touch.startX = touch.pageX;
+      this.touch.startY = touch.pageY;
+    },
+    middleTouchMove(e) {
+      if (!this.touch.initiated) {
+        return;
+      }
+      const touch = e.touches[0];
+      const deltaX = touch.pageX - this.touch.startX;
+      const deltaY = touch.pageY - this.touch.startY;
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return;
+      }
+      const left = this.currentShow === "cd" ? 0 : -window.innerWidth;
+      const offsetwidth = Math.min(
+        0,
+        Math.max(-window.innerWidth, left + deltaX)
+      );
+      this.touch.percent = Math.abs(offsetwidth / window.innerWidth);
+      this.$refs.lyricList.$el.style[
+        transform
+      ] = `translate3d(${offsetwidth}px, 0, 0)`;
+      this.$refs.lyricList.$el.style[transitionDuration] = 0;
+      this.$refs.centerL.style.opacity = 1 - this.touch.percent;
+      this.$refs.centerL.style[transitionDuration] = 0;
+    },
+    middleTouchEnd() {
+      let offsetwidth;
+      let opacity;
+      if (this.currentShow == "cd") {
+        // 从右向左划
+        if (this.touch.percent > 0.1) {
+          offsetwidth = -window.innerWidth;
+          opacity = 0;
+          console.log(opacity);
+          this.currentShow = "lyric";
+        } else {
+          offsetwidth = 0;
+          opacity = 1;
+          console.log(opacity);
+        }
+      } else {
+        if (this.touch.percent < 0.9) {
+          offsetwidth = 0;
+          this.currentShow = "cd";
+          opacity = 1;
+          console.log(opacity);
+        } else {
+          offsetwidth = -window.innerWidth;
+          opacity = 0;
+          console.log(opacity);
+        }
+      }
+
+      this.$refs.lyricList.$el.style[
+        transform
+      ] = `translate3d(${offsetwidth}px, 0, 0)`;
+      this.$refs.lyricList.$el.style[transitionDuration] = `300ms`;
+      this.$refs.centerL.style.opacity = opacity;
+      this.$refs.centerL.style[transitionDuration] = 300;
+      this.touch.initiated = false;
+    },
   },
   computed: {
     ...mapGetters([
@@ -334,29 +481,36 @@ export default {
       "lastTime",
       "mode",
       "sequenceList",
-      "words"
+      "words",
     ]),
     playIcon() {
       return this.playing ? "iconfont iconpasue-min-gray" : "iconfont iconplay";
     },
-    iconMode(){
-      return this.mode === playMode.sequence ? "iconfont iconloop" : this.mode=== playMode.loop ? "iconfont iconloop2": "iconfont iconicon_random"
+    iconMode() {
+      return this.mode === playMode.sequence
+        ? "iconfont iconloop"
+        : this.mode === playMode.loop
+        ? "iconfont iconloop2"
+        : "iconfont iconicon_random";
     },
     cdCls() {
       return this.playing ? "play" : "play pause";
     },
-    disableCls(){
-      return this.songReady ? '' : 'disable'
+    disableCls() {
+      return this.songReady ? "" : "disable";
     },
     percent() {
-      return this.currentTime / this.lastTime
-    }
+      return this.currentTime / this.lastTime;
+    },
   },
   watch: {
     musicUrl(newSong, oldSong) {
+      if (this.currentLyric) {
+        this.currentLyric.stop();
+      }
       this.$nextTick(() => {
         this.$refs.audio.play();
-        this.getLyric()
+        this.getLyric();
       });
     },
     playing(newPlaying) {
@@ -383,15 +537,16 @@ export default {
     background-color: #fff;
     .background {
       position: absolute;
-      // top: -33%; 
+      // top: -33%;
       top: -0;
       right: 0;
       // left: -150%;
       left: 0;
       bottom: 0;
-      img{
-        -webkit-filter: blur(90px);  
-        filter: blur(90px);  
+      img {
+        -webkit-filter: blur(90px);
+        filter: blur(90px);
+        opacity: 0.4;
       }
     }
     .top {
@@ -420,32 +575,109 @@ export default {
       }
     }
     .center {
-      .e1-image {
-        // width: calc(100% - 0.2px);
-        position: fixed;
-        top: calc(50% - 240px);
-        left: calc(50% - 120px);
-        // width: 100%;
-        // transform: translateX(-50%);
-
-        img {
-          width: 240px;
-          height: 240px;
-          background-color: red;
-          border-radius: 50%;
+      position: fixed;
+      width: 100%;
+      top: 80px;
+      bottom: 170px;
+      white-space: nowrap;
+      font-size: 0;
+      .center-l {
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        width: 100%;
+        height: 0;
+        // padding-top: 80%;
+        .cd-wrapper {
+          position: absolute;
+          top: 0;
+          left: calc(50% - 120px);
+          right: 0;
+          width: 80%;
+          height: 100%;
+          .e1-image {
+            margin: 0;
+            width: 240px;
+            height: 240px;
+            // box-sizing: border-box;
+            // border: 10px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            &.play {
+              animation: rotate 20s linear infinite;
+            }
+            &.pause {
+              animation-play-state: paused;
+            }
+            img {
+              width: 240px;
+              height: 240px;
+              border-radius: 50%;
+            }
+          }
+        }
+        .playing-lyric-wrapper {
+          position: fixed;
+          bottom: 40%;
+          left: 10%;
+          width: 80%;
+          margin: 30px auto 0 auto;
+          overflow: hidden;
+          text-align: center;
+          .playing-lyric {
+            height: 20px;
+            line-height: 20px;
+            font-size: 15px;
+            color: #000;
+          }
         }
       }
-      .play {
-        animation: rotate 20s linear infinite;
-      }
-      .pause {
-        animation-play-state: paused;
+
+      .center-r {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+        // height: calc(100% - 230px);
+        .lyric-wrapper {
+          width: 80%;
+          margin: 0 auto;
+          overflow: hidden;
+          text-align: center;
+          // height: 100%;
+          .text {
+            line-height: 32px;
+            color: #000;
+            font-size: 14px;
+          }
+          .current {
+            color: #ffcd32;
+          }
+        }
       }
     }
     .bottom {
       position: absolute;
       bottom: 30px;
       width: 100%;
+      .dot-wrapper {
+        text-align: center;
+        font-size: 0;
+        .dot {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 4px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.5);
+          &.active {
+            width: 20px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+          }
+        }
+      }
       .progress-wrapper {
         display: flex;
         align-items: center;

@@ -4,11 +4,11 @@
       <i class="iconfont iconaui-icon-back"></i>
     </div>
     <h1 class="title">{{ songs.name }}</h1>
-    <div ref="bgImg" class="bgimg">
-      <img ref="img" class="image" :src="songs.cover" alt="" />
+    <div ref="bgImg" class="bgimg" :style="bgStyle">
+      <!-- <img ref="img" class="image" @load="loadImg" :src="songs.cover" alt="" /> -->
     </div>
     <div class="bg-layer" ref="layer"></div>
-    <scroll @scroll="scroll" class="list" ref="list">
+    <scroll @scroll="scroll" :probe-type="3" class="list" ref="list">
       <div class="song-list">
         <song-list @select="selectItem" :list="list"></song-list>
       </div>
@@ -49,7 +49,12 @@ export default {
     console.log(this.imgHeight);
     // 向上滚动的高度
     this.minTranslateY = -this.imgHeight + RESERVED_HEIGHT;
+    
     this.$refs.list.$el.style.top = `${this.imgHeight}px`;
+    setTimeout(() => {
+      this.$refs.list.refresh()
+    }, 20);
+    
   },
   methods: {
     getSingerList() {
@@ -62,6 +67,14 @@ export default {
     },
     scroll(position) {
       this.ScrollY = position.y;
+      
+    },
+    loadImg(){
+        // this.$refs.scroll.refresh()
+        if(this.imgHeight === 311) {
+          this.$refs.list.refresh()
+        }
+        
     },
     backClick() {
       this.$router.back();
@@ -71,15 +84,10 @@ export default {
         list: this.list,
         index,
       });
-      console.log(item.id);
-      console.log(this.list);
-
       getMusic(item.id).then((res) => {
         this.setMusicUrl(res.data[0].url);
-        // console.log(res);
       });
       getSongDetail(this.currentSong.id).then((res) => {
-        
         const songs = res.songs[0];
         this.setSongImg(songs.al.picUrl)
         const time = songs.dt / 1000
@@ -96,6 +104,9 @@ export default {
   },
   computed: {
     ...mapGetters(["singer", "currentSong"]),
+    bgStyle(){
+      return `background-image:url(${this.songs.cover})`
+    }
   },
   watch: {
     ScrollY(newval) {
@@ -132,6 +143,7 @@ export default {
       style["transform"] = `scale(${scale})`;
       style["webkitTransform"] = `scale(${scale})`;
     },
+
   },
 };
 </script>
@@ -176,14 +188,13 @@ export default {
   .bgimg {
     position: relative;
     width: 100%;
-    height: 0;
     padding-top: 75%;
     transform-origin: top;
     background-size: cover;
     overflow: hidden;
     // z-index: 9;
     .image {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;

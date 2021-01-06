@@ -59,7 +59,7 @@ export default {
   margin: 0;
   .rank-sing {
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     padding: 0;
     list-style: none;
     li {

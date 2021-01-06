@@ -1,7 +1,6 @@
 <template>
   <div class="list-detail">
     <music-list :songs="songs"></music-list>
-    <router-view></router-view>
   </div>
 </template>
 
@@ -19,9 +18,9 @@ export default {
     };
   },
   created() {
-    // console.log(this.singer);
+    console.log(this.singer);
     this.getSingerDeail();
-    // console.log(this.songs);
+    console.log(this.songs);
     
   },
   computed: {
@@ -33,6 +32,7 @@ export default {
         this.$router.push("/list");
       }
       getSingerDeail(this.singer.id).then((res) => {
+        console.log(res);
         this.songs = res.data.artist;
       });
     },
