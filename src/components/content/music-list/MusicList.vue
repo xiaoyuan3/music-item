@@ -46,7 +46,7 @@ export default {
   },
   mounted() {
     this.imgHeight = this.$refs.bgImg.clientHeight;
-    console.log(this.imgHeight);
+    // console.log(this.imgHeight);
     // 向上滚动的高度
     this.minTranslateY = -this.imgHeight + RESERVED_HEIGHT;
     

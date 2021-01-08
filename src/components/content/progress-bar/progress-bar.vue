@@ -47,7 +47,6 @@ export default {
     },
     progressTouchEnd() {
       this.touch.initiated = false
-      // console.log('cc');
       this._triggerPercent()
     },
     progressClick(e){

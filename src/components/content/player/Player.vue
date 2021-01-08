@@ -706,7 +706,6 @@ export default {
         align-items: center;
         justify-content: space-around;
         width: 100%;
-        // margin: 0 20px;
         .iconfont {
           flex: 1;
         }
