@@ -3,7 +3,9 @@ import {playMode} from 'assets/js/config'
 // 管理状态
 const state = {
   singer: {},
+  songs:{},
   songImg: "",
+  disc:{},
   lastTime: "",
   musicUrl: "",
   playing: false,

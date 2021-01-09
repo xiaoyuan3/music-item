@@ -3,14 +3,14 @@
     <div class="back" @click="backClick">
       <i class="iconfont iconaui-icon-back"></i>
     </div>
-    <h1 class="title">{{ songs.name }}</h1>
-    <div ref="bgImg" class="bgimg" :style="bgStyle">
-      <!-- <img ref="img" class="image" @load="loadImg" :src="songs.cover" alt="" /> -->
+    <h1 class="title" v-html="name"></h1>
+    <div ref="bgImg" class="bgimg">
+      <img ref="img" class="image" :src="pic" alt="" />
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll @scroll="scroll" :probe-type="3" class="list" ref="list">
       <div class="song-list">
-        <song-list @select="selectItem" :list="list"></song-list>
+        <song-list @select="selectItem" :list="list" :singers="singers"></song-list>
       </div>
     </scroll>
 
@@ -24,12 +24,27 @@ import SongList from "../song-list/SongList";
 import { mapGetters } from "vuex";
 import { mapActions } from "vuex";
 import { mapMutations } from "vuex";
-import { getSingerList } from "network/list";
-import { getMusic,getSongDetail,getSongWords } from "network/player";
+// import { getSingerList } from "network/list";
+import {
+  getMusic,
+  getSongDetail,
+  getSongWords,
+  getPlayer,
+} from "network/player";
 const RESERVED_HEIGHT = 40;
 export default {
   props: {
-    songs: {},
+    list: {
+      type:Array,
+      default: []
+    },
+    bgImage: {
+      type: String,
+      default: "",
+    },
+    singers:"",
+    name: "",
+    pic: "",
   },
   components: {
     SongList,
@@ -37,7 +52,7 @@ export default {
   },
   data() {
     return {
-      list: [],
+      // list: [],
       ScrollY: 0,
     };
   },
@@ -49,32 +64,35 @@ export default {
     // console.log(this.imgHeight);
     // 向上滚动的高度
     this.minTranslateY = -this.imgHeight + RESERVED_HEIGHT;
-    
+
     this.$refs.list.$el.style.top = `${this.imgHeight}px`;
     setTimeout(() => {
-      this.$refs.list.refresh()
+      this.$refs.list.refresh();
     }, 20);
-    
   },
   methods: {
     getSingerList() {
       // console.log(this.singer.id);
-      getSingerList(this.singer.id).then((res) => {
-        res.songs.forEach((item) => {
-          this.list.push(item);
-        });
-      });
+        // getSingerList(this.singer.id).then((res) => {
+        //   res.songs.forEach((item) => {
+        //     this.list.push(item);
+        //   });
+        // });
+
+      // getPlayer(this.disc.id).then((res) => {
+      //   res.playlist.tracks.forEach((item) => {
+      //     this.list.push(item);
+      //   });
+      // });
     },
     scroll(position) {
       this.ScrollY = position.y;
-      
     },
-    loadImg(){
-        // this.$refs.scroll.refresh()
-        if(this.imgHeight === 311) {
-          this.$refs.list.refresh()
-        }
-        
+    loadImg() {
+      // this.$refs.scroll.refresh()
+      if (this.imgHeight === 311) {
+        this.$refs.list.refresh();
+      }
     },
     backClick() {
       this.$router.back();
@@ -89,9 +107,9 @@ export default {
       });
       getSongDetail(this.currentSong.id).then((res) => {
         const songs = res.songs[0];
-        this.setSongImg(songs.al.picUrl)
-        const time = songs.dt / 1000
-        this.setLastTime(time)
+        this.setSongImg(songs.al.picUrl);
+        const time = songs.dt / 1000;
+        this.setLastTime(time);
       });
     },
     ...mapActions(["selectPlay"]),
@@ -99,14 +117,14 @@ export default {
       setMusicUrl: "SET_MUSIC_URL",
       setSongImg: "SET_SONG_IMG",
       setLastTime: "SET_LAST_TIME",
-      setWords:"SET_WORDS"
+      setWords: "SET_WORDS",
     }),
   },
   computed: {
-    ...mapGetters(["singer", "currentSong"]),
-    bgStyle(){
-      return `background-image:url(${this.songs.cover})`
-    }
+    ...mapGetters(["currentSong", "disc"]),
+    // bgStyle(){
+    //   return `background-image:url(${this.songs.cover})`
+    // }
   },
   watch: {
     ScrollY(newval) {
@@ -143,7 +161,6 @@ export default {
       style["transform"] = `scale(${scale})`;
       style["webkitTransform"] = `scale(${scale})`;
     },
-
   },
 };
 </script>
@@ -177,7 +194,6 @@ export default {
     top: 0;
     left: 50%;
     right: 0;
-    width: 20%;
     transform: translate(-50%);
     text-align: center;
     font-size: 16px;

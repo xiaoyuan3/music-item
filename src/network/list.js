@@ -20,7 +20,7 @@ export function getSingerDeail(singgerId) {
     }
   })
 }
-// /artist/songs
+// /artist/songs 
 
 export function getSingerList(singgerId) {
   return request({

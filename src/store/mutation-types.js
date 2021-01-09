@@ -5,11 +5,15 @@ export const SET_SONG_IMG = 'SET_SONG_IMG'
 // SET_LAST_TIME
 export const SET_LAST_TIME = 'SET_LAST_TIME'
 
+export const SET_SONGS = 'SET_SONGS'
+
 export const SET_MUSIC_URL = 'SET_MUSIC_URL'
 
 export const SET_PLAYING_STATE = 'SET_PLAYING_STATE'
 
 export const SET_FULL_SCREEN = 'SET_FULL_SCREEN'
+
+export const SET_DISC = 'SET_DISC'
 
 export const SET_PLAYLIST = 'SET_PLAYLIST'
 

@@ -17,6 +17,7 @@ import Scroll from "components/common/scroll/Scroll";
 // 子组件
 import RecommendSwiper from "./childComps/RecommendSwiper";
 import RecommendPerson from "./childComps/RecommendPerson";
+import {mapMutations,mapGetters} from 'vuex'
 export default {
   name: "Recommend",
   components: {
@@ -34,6 +35,7 @@ export default {
     // 调用methods中的getRecommendBanner、getRecommendPerson函数
     this.getRecommendBanner();
     this.getRecommendPerson();
+    
   },
   mounted() {
     setTimeout(() => {
@@ -60,8 +62,18 @@ export default {
       this.$router.push({
         path: `/recommend/${item.id}`,
       });
-    }
+      let disc = []
+      disc = item
+      console.log(disc);
+      this.setDisc(disc)
+    },
+    ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
   },
+  computed: {
+    ...mapGetters["disc"]
+  }
 };
 </script>
 

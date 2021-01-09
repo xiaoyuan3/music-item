@@ -3,6 +3,8 @@ export const singer = state => state.singer
 
 export const songImg = state => state.songImg
 
+export const songs = state => state.songs
+
 export const lastTime = state => state.lastTime
 
 export const musicUrl = state => state.musicUrl
@@ -22,3 +24,5 @@ export const currentIndex = state => state.currentIndex
 export const currentSong = (state) => {
   return state.playlist[state.currentIndex] || {}
 }
+
+export const disc = state => state.disc

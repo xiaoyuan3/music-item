@@ -1,30 +1,37 @@
 <template>
   <div class="list-detail">
-    <music-list :songs="songs"></music-list>
+    <music-list :name="name" :pic="pic" :list="list" :singers="singer.name"></music-list>
   </div>
 </template>
 
 <script>
 import MusicList from "components/content/music-list/MusicList";
-import { mapGetters } from "vuex";
-import { getSingerDeail } from "network/list";
+import { mapGetters,mapMutations } from "vuex";
+import { getSingerDeail,getSingerList } from "network/list";
+// import { getSingerList } from "network/list";
 export default {
   components: {
     MusicList,
   },
   data() {
     return {
-      songs: [],
+      list: [],
     };
   },
   created() {
     console.log(this.singer);
     this.getSingerDeail();
     console.log(this.songs);
-    
+    console.log();
   },
   computed: {
-    ...mapGetters(["singer"]),
+    ...mapGetters(["singer", "songs"]),
+    name(){
+      return this.songs.name
+    },
+    pic(){
+      return this.songs.cover
+    }
   },
   methods: {
     getSingerDeail() {
@@ -33,10 +40,22 @@ export default {
       }
       getSingerDeail(this.singer.id).then((res) => {
         console.log(res);
-        this.songs = res.data.artist;
+        let songs = []
+        songs = res.data.artist;
+        this.setSongs(songs)
       });
+      getSingerList(this.singer.id).then((res) => {
+          res.songs.forEach((item) => {
+            // console.log(item);
+            this.list.push(item);
+          });
+        });
     },
     
+    ...mapMutations({
+      setSongs: "SET_SONGS",
+      
+    }),
   },
 };
 </script>

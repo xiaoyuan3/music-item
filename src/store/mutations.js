@@ -8,6 +8,9 @@ const mutations = {
   [types.SET_MUSIC_URL](state, musicUrl) {
     state.musicUrl = musicUrl
   },
+  [types.SET_SONGS](state, songs) {
+    state.songs = songs
+  },
   [types.SET_SONG_IMG](state, songImg) {
     state.songImg = songImg
   },
@@ -16,6 +19,9 @@ const mutations = {
   },
   [types.SET_PLAYING_STATE](state, flag) {
     state.playing = flag
+  },
+  [types.SET_DISC](state, disc) {
+    state.disc = disc
   },
   [types.SET_FULL_SCREEN](state, flag) {
     state.fullScreen = flag

@@ -102,6 +102,7 @@
         </div>
         <div class="text">
           <h2 v-html="currentSong.name"></h2>
+          <!-- 播放器的歌手有点问题 -->
           <p v-html="singer.name"></p>
         </div>
         <div class="mini-control">
@@ -163,6 +164,8 @@ export default {
   },
   created() {
     this.touch = {};
+    // console.log();
+    
   },
   mounted(){
     setTimeout(() => {
@@ -332,11 +335,13 @@ export default {
     // 获取音乐
     getMusic() {
       getMusic(this.currentSong.id).then((res) => {
+        
         this.setMusicUrl(res.data[0].url);
       });
       this.getSongDetail();
     },
     getSongDetail() {
+      // console.log(this.currentSong);
       getSongDetail(this.currentSong.id).then((res) => {
         const songs = res.songs[0];
         this.setSongImg(songs.al.picUrl);
@@ -379,6 +384,7 @@ export default {
     getLyric() {
       getSongWords(this.currentSong.id)
         .then((res) => {
+          console.log(this.currentSong);
           console.log(res);
           this.currentLyric = new Lyric(res.lrc.lyric, this.handleLyric);
           if (this.playing) {

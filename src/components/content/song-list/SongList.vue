@@ -6,7 +6,7 @@
           {{ item.name }}
         </h1>
         <ul>
-          <li class="list2">{{ singer.name }}</li>
+          <li class="list2" v-html="singers"></li>
         </ul>
       </li>
     </ul>
@@ -23,6 +23,7 @@ export default {
         return [];
       },
     },
+    singers:""
   },
   data() {
     return {
@@ -38,7 +39,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["singer"]),
+    // ...mapGetters(["singer"]),
   },
 };
 </script>
