@@ -1,6 +1,10 @@
 <template>
   <div class="rank">
-    <rank-news :list="list" :songs="songs" :artists="artists"></rank-news>
+    <rank-news
+      @selectItem="selectItem"
+      :list="list"
+      :songList1="songList1"
+    ></rank-news>
     <!-- <rank-news-song :songs="songs" :artists="artists"></rank-news-song> -->
   </div>
 </template>
@@ -8,9 +12,11 @@
 <script>
 // 公共组件
 import { getRankNews, getRankNewsSing } from "network/rank";
+import { getPlayer } from "network/player";
 
 // 子组件
 import RankNews from "./childComps/RankNews";
+import { mapMutations,mapGetters } from 'vuex';
 // import RankNewsSong from "./childComps/RankNewsSong";
 export default {
   name: "Rank",
@@ -21,33 +27,35 @@ export default {
   data() {
     return {
       list: [],
-      artists:[],
-      songs:[],
+      artists: [],
+      songs: [],
+      songList1: [],
     };
   },
   created() {
-    this.getRankNews();
     this.getRankNewsSing();
   },
   methods: {
-    getRankNews() {
-      getRankNews().then((res) => {
-        // console.log(res);
-        this.list = res.list;
-      });
-    },
     getRankNewsSing() {
       getRankNewsSing().then((res) => {
-        console.log(res);
-        // console.log(res.artistToplist.artists);
-        // console.log(res.rewardToplist.songs);
-        this.artists = res.artistToplist.artists;
-        this.songs = res.rewardToplist.songs;
-
-        // this.resft = res
+        console.log(res.list);
+        this.list = res.list;
+        
       });
     },
+    selectItem(item) {
+      this.$router.push({
+        path: `/rank/${item.id}`,
+      });
+      this.setRank(item)
+    },
+    ...mapMutations({
+      setRank: "SET_RANK",
+    }),
   },
+  computed:{
+    ...mapGetters["Rank"]
+  }
 };
 </script>
 
@@ -55,5 +63,4 @@ export default {
 .rank {
   margin-top: 78px;
 }
-
 </style>

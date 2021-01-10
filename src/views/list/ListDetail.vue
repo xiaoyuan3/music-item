@@ -21,8 +21,6 @@ export default {
   created() {
     console.log(this.singer);
     this.getSingerDeail();
-    console.log(this.songs);
-    console.log();
   },
   computed: {
     ...mapGetters(["singer", "songs"]),

@@ -7,6 +7,8 @@ export const SET_LAST_TIME = 'SET_LAST_TIME'
 
 export const SET_SONGS = 'SET_SONGS'
 
+export const SET_RANK = 'SET_RANK'
+
 export const SET_MUSIC_URL = 'SET_MUSIC_URL'
 
 export const SET_PLAYING_STATE = 'SET_PLAYING_STATE'

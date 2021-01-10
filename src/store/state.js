@@ -5,6 +5,7 @@ const state = {
   singer: {},
   songs:{},
   songImg: "",
+  Rank:{},
   disc:{},
   lastTime: "",
   musicUrl: "",

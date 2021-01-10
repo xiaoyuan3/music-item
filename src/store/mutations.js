@@ -11,6 +11,9 @@ const mutations = {
   [types.SET_SONGS](state, songs) {
     state.songs = songs
   },
+  [types.SET_RANK](state, Rank) {
+    state.Rank = Rank
+  },
   [types.SET_SONG_IMG](state, songImg) {
     state.songImg = songImg
   },

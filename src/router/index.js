@@ -3,9 +3,11 @@ import VueRouter from 'vue-router'
 
 const Recommend = () => import('../views/recommend/Recommend')
 const Rank = () => import('../views/rank/Rank')
+const RankDetail = () => import('../views/rank/RankDetail')
 const List = () => import('../views/list/List')
 const ListDetail = () => import('../views/list/ListDetail')
 const RecommendDetail = () => import('../views/recommend/RecommendDetail')
+
 // 使用组件
 Vue.use(VueRouter);
 
@@ -40,7 +42,13 @@ const routes = [
   {
     // 排行页面路由
     path: '/rank',
-    component: Rank
+    component: Rank,
+    children: [
+      {
+        path: ':id',
+        component: RankDetail
+      }
+    ]
   },
   // {
   //   path: '/detail/:id',
