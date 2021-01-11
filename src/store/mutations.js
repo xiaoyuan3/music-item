@@ -14,6 +14,9 @@ const mutations = {
   [types.SET_RANK](state, Rank) {
     state.Rank = Rank
   },
+  [types.SET_RANK_NAME](state, RankName) {
+    state.RankName = RankName
+  },
   [types.SET_SONG_IMG](state, songImg) {
     state.songImg = songImg
   },

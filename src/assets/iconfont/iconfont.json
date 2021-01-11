@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "2060198",
+      "name": "delate",
+      "font_class": "delate",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "10405356",
+      "name": "delate",
+      "font_class": "delate1",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "12417391",
+      "name": "delate",
+      "font_class": "delate2",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
       "icon_id": "12852712",
       "name": "loop",
       "font_class": "loop2",

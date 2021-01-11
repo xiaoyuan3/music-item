@@ -9,7 +9,7 @@
       <span>V M U S I C J I N</span>
     </div>
     <!-- 右边图标 -->
-    <div class="right-header">
+    <div class="right-header" @click="iconClick">
       <span class="iconfont iconzu"></span>
     </div>
   </div>
@@ -18,6 +18,13 @@
 <script>
 export default {
   name: "m-header",
+  methods:{
+    iconClick(){
+      this.$router.push({
+        path: '/search',
+      })
+    }
+  }
 };
 </script>
 

@@ -6,7 +6,9 @@
       :songList1="songList1"
     ></rank-news>
     <!-- <rank-news-song :songs="songs" :artists="artists"></rank-news-song> -->
+    <router-view></router-view>
   </div>
+ 
 </template>
 
 <script>
@@ -44,10 +46,13 @@ export default {
       });
     },
     selectItem(item) {
+      console.log('xx');
       this.$router.push({
         path: `/rank/${item.id}`,
       });
-      this.setRank(item)
+      let rank = []
+      rank = item
+      this.setRank(rank)
     },
     ...mapMutations({
       setRank: "SET_RANK",

@@ -7,6 +7,7 @@ const RankDetail = () => import('../views/rank/RankDetail')
 const List = () => import('../views/list/List')
 const ListDetail = () => import('../views/list/ListDetail')
 const RecommendDetail = () => import('../views/recommend/RecommendDetail')
+const Search = () => import('../views/search/Search')
 
 // 使用组件
 Vue.use(VueRouter);
@@ -45,15 +46,15 @@ const routes = [
     component: Rank,
     children: [
       {
-        path: ':id',
+        path:  `:id`,
         component: RankDetail
       }
     ]
   },
-  // {
-  //   path: '/detail/:id',
-  //   component: SingerDeail
-  // }
+  {
+    path: '/search',
+    component: Search
+  }
   
 ]
 

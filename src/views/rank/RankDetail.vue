@@ -3,8 +3,8 @@
     <music-list
       :name="name"
       :pic="pic"
-      :list="list"
       :singers="singers"
+      :list="list"
     ></music-list>
   </transition>
 </template>
@@ -13,37 +13,54 @@
 import MusicList from "components/content/music-list/MusicList.vue";
 import{ getPlayer } from "network/player"
 import {getSingerList} from "network/list"
-import { mapGetters } from "vuex";
+import { mapGetters,mapMutations } from "vuex";
 export default {
   components: {
     MusicList,
   },
+  data(){
+    return{
+      list:[],
+      singerName:[]
+    }
+  },
   created() {
     this.getPlayer();
-    console.log(this.Rank);
+    // console.log(this.RankName);
+    
+  },
+  mounted(){
+    console.log(this.singerName);
   },
   methods: {
     getPlayer() {
-      // if(!this.setRank.id) {
-      //   this.$router.push('/rank')
-      // }
-      getPlayer(this.setRank.id).then(res => {
-        console.log(res);
+      if(!this.Rank.id) {
+        this.$router.push('/rank')
+      }
+      getPlayer(this.Rank.id).then(res => {
+        // console.log(res);
       })
-      // getPlayer(this.disc.id).then((res) => {
-      //   res.playlist.tracks.forEach((item) => {
-      //     this.list.push(item);
-      //   });
-      // });
+      getPlayer(this.Rank.id).then((res,index) => {
+        res.playlist.tracks.forEach((item) => {
+          this.list.push(item);
+          // this.singerName.push(item.ar[0].name)
+          // console.log(item.ar[0].name);
+        });
+        
+        
+      });
     },
+    ...mapMutations({
+      setRankName: "SET_RANK_NAME",
+    }),
     
   },
   computed: {
     name() {
-      return ;
+      return this.Rank.name;
     },
     pic(){
-      return ;
+      return this.Rank.coverImgUrl;
     },
     singers(){
       return 

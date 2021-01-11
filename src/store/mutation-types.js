@@ -9,6 +9,8 @@ export const SET_SONGS = 'SET_SONGS'
 
 export const SET_RANK = 'SET_RANK'
 
+export const SET_RANK_NAME = 'SET_RANK_NAME'
+
 export const SET_MUSIC_URL = 'SET_MUSIC_URL'
 
 export const SET_PLAYING_STATE = 'SET_PLAYING_STATE'

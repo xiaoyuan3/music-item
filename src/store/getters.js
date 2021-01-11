@@ -7,6 +7,8 @@ export const songs = state => state.songs
 
 export const Rank = state => state.Rank
 
+export const RankName = state => state.RankName
+
 export const lastTime = state => state.lastTime
 
 export const musicUrl = state => state.musicUrl

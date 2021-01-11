@@ -5,7 +5,8 @@ const state = {
   singer: {},
   songs:{},
   songImg: "",
-  Rank:{},
+  Rank: {},
+  RankName:{},  //还没用
   disc:{},
   lastTime: "",
   musicUrl: "",
