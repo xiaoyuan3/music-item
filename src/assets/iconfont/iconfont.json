@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7048230",
+      "name": "Music",
+      "font_class": "Music",
+      "unicode": "e78b",
+      "unicode_decimal": 59275
+    },
+    {
       "icon_id": "2060198",
       "name": "delate",
       "font_class": "delate",
