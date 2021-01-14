@@ -164,8 +164,6 @@ export default {
   },
   created() {
     this.touch = {};
-    // console.log();
-    
   },
   mounted(){
     setTimeout(() => {
@@ -335,7 +333,6 @@ export default {
     // 获取音乐
     getMusic() {
       getMusic(this.currentSong.id).then((res) => {
-        
         this.setMusicUrl(res.data[0].url);
       });
       this.getSongDetail();

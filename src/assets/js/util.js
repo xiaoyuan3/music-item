@@ -16,3 +16,17 @@ export function shuffle(arr) {
   return _arr
   // return arr
 }
+
+// 节流 简单说就是在我不断地触发事件的时候别老是发请求，发一次就够了
+export function debounce(func, delay) {
+  let timer
+
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      func.apply(this, args)
+    }, delay)
+  }
+}

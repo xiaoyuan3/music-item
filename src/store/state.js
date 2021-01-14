@@ -1,6 +1,6 @@
 import {playMode} from 'assets/js/config'
 
-// 管理状态
+// 管理状态 player页面是由playlist.length > 0 来出现页面的
 const state = {
   singer: {},
   songs:{},

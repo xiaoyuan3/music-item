@@ -37,9 +37,6 @@ export default {
       if(!this.Rank.id) {
         this.$router.push('/rank')
       }
-      getPlayer(this.Rank.id).then(res => {
-        // console.log(res);
-      })
       getPlayer(this.Rank.id).then((res,index) => {
         res.playlist.tracks.forEach((item) => {
           this.list.push(item);
