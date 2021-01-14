@@ -1,4 +1,5 @@
-import {playMode} from 'assets/js/config'
+import { playMode } from 'assets/js/config'
+import {loadSearch} from '../assets/js/cache'
 
 // 管理状态 player页面是由playlist.length > 0 来出现页面的
 const state = {
@@ -15,7 +16,9 @@ const state = {
   playlist: [],
   sequenceList: [],
   mode: playMode.sequence,
-  currentIndex: -1
+  currentIndex: -1,
+  // 在loadSearch中读取数据
+  searchHistory:loadSearch()
 }
 
 export default state

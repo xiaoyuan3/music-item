@@ -58,6 +58,8 @@ export default {
         const time = songs.dt / 1000;
         this.setLastTime(time);
       });
+
+      this.$emit('select')
     },
     ...mapMutations({
       setMusicUrl: "SET_MUSIC_URL",

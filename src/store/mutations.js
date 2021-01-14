@@ -41,6 +41,9 @@ const mutations = {
   [types.SET_PLAY_MODE](state, mode) {
     state.mode = mode
   },
+  [types.SET_SEARCH_HISTORY](state, history) {
+    state.searchHistory = history
+  },
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index
   },

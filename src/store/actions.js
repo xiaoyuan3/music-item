@@ -1,4 +1,6 @@
 import *as types from './mutation-types'
+import {saveSearch} from '../assets/js/cache'
+
 function findIndex(list, song) {
   return list.findIndex((item) => {
     return item.id === song.id
@@ -57,4 +59,8 @@ export const insertSong = function ({ commit, state }, song) {
   commit(types.SET_CURRENT_INDEX, currentIndex)
   commit(types.SET_FULL_SCREEN, true)
   commit(types.SET_PLAYING_STATE, true)
+}
+
+export const saveSearchHistory = function ({commit}, query) {
+  commit(types.SET_SEARCH_HISTORY, saveSearch(query))
 }

@@ -13,10 +13,19 @@
             </li>
           </ul>
         </div>
+        <div class="search-history" v-show="searchHistory.length">
+          <h1 class="title">
+            <span class="text">搜索历史</span>
+            <span class="clear">
+              <i class="iconfont icondelate2"></i>
+            </span>
+          </h1>
+          <search-list :searches="searchHistory"></search-list>
+        </div>
       </div>
     </div>
     <scroll class="scroll" v-show="query">
-      <suggest :query="query"></suggest>
+      <suggest @select="saveSearch" :query="query"></suggest>
     </scroll>
     <router-view></router-view>
   </div>
@@ -26,12 +35,15 @@
 import SearchBox from "components/content/search-box/SearchBox";
 import Suggest from "components/content/suggest/Suggest"
 import Scroll from "components/common/scroll/Scroll";
+import SearchList from "components/content/search-list/SearchList"
 import { getSearch, getHot } from "network/search";
+import {mapActions, mapGetters} from 'vuex'
 export default {
   components: {
     SearchBox,
     Suggest,
-    Scroll
+    Scroll,
+    SearchList
     // 搜索歌曲、歌手
   },
   data() {
@@ -58,13 +70,24 @@ export default {
     },
     onQueryChange(query){
       this.query = query
-    }
+    },
+    saveSearch() {
+      this.saveSearchHistory(this.query)
+    },
+    ...mapActions([
+      'saveSearchHistory'
+    ])
     // getSearch() {
     //   getSearch().then((res) => {
     //     console.log(res);
     //   });
     // },
   },
+  computed:{
+    ...mapGetters([
+      'searchHistory'
+    ])
+  }
 };
 </script>
 
@@ -103,6 +126,18 @@ template,ul,div {
         background-color: rgb(213, 172, 172);
         font-size: 14px;
         color: rgba(0, 0, 0, 0.5);
+      }
+    }
+    .search-history{
+      position: relative;
+      .title{
+        display: flex;
+        align-items: center;
+        height: 40px;
+        font-size: 16px;
+        .text{
+          flex: 1;
+        }
       }
     }
   }
