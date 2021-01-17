@@ -1,5 +1,6 @@
 import *as types from './mutation-types'
-import {saveSearch} from '../assets/js/cache'
+import {saveSearch,deleteSearch, clearSearch} from '../assets/js/cache'
+import storage from 'good-storage'
 
 function findIndex(list, song) {
   return list.findIndex((item) => {
@@ -63,4 +64,12 @@ export const insertSong = function ({ commit, state }, song) {
 
 export const saveSearchHistory = function ({commit}, query) {
   commit(types.SET_SEARCH_HISTORY, saveSearch(query))
+}
+
+export const deleteSearchHistory = function ({commit}, query) {
+  commit(types.SET_SEARCH_HISTORY, deleteSearch(query))
+}
+
+export const clearSearchHistory = function ({ commit }) {
+  commit(types.SET_SEARCH_HISTORY, clearSearch())
 }

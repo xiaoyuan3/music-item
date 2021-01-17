@@ -114,11 +114,12 @@
             ></i>
           </progress-circle>
         </div>
-        <div class="mini-right">
+        <div class="mini-right" @click.stop="showPlayList">
           <i class="iconfont iconicon-music-lsit"></i>
         </div>
       </div>
     </transition>
+    <play-list ref="playlist"></play-list>
     <audio
       ref="audio"
       @timeupdate="updateTime"
@@ -136,13 +137,16 @@
 import animations from "create-keyframe-animation";
 import ProgressBar from "../progress-bar/progress-bar.vue";
 import ProgressCircle from "../progress-circle/progress-circle";
+import Scroll from "components/common/scroll/Scroll";
+import PlayList from "../playlist/playlist";
 import Lyric from "lyric-parser";
+
 import { mapGetters, mapMutations } from "vuex";
 import { prefixStyle } from "assets/js/dom";
 import { getMusic, getSongDetail, getSongWords } from "network/player";
 import { playMode } from "assets/js/config";
 import { shuffle } from "assets/js/util";
-import Scroll from "components/common/scroll/Scroll";
+
 
 const transform = prefixStyle("transform");
 const transitionDuration = prefixStyle("transitionDuration");
@@ -151,6 +155,7 @@ export default {
     ProgressBar,
     ProgressCircle,
     Scroll,
+    PlayList
   },
   data() {
     return {
@@ -227,6 +232,9 @@ export default {
     afterLeave() {
       this.$refs.cdWrapper.style.transition = "";
       this.$refs.cdWrapper.style[transform] = "";
+    },
+    showPlayList() {
+      this.$refs.playlist.show()
     },
     // 计算大图片和小图片的中心位置
     _getPosAndScale() {
@@ -335,10 +343,6 @@ export default {
       getMusic(this.currentSong.id).then((res) => {
         this.setMusicUrl(res.data[0].url);
       });
-      this.getSongDetail();
-    },
-    getSongDetail() {
-      // console.log(this.currentSong);
       getSongDetail(this.currentSong.id).then((res) => {
         const songs = res.songs[0];
         this.setSongImg(songs.al.picUrl);
@@ -347,6 +351,16 @@ export default {
         this.setLastTime(time);
       });
     },
+    // getSongDetail() {
+    //   // console.log(this.currentSong);
+    //   getSongDetail(this.currentSong.id).then((res) => {
+    //     const songs = res.songs[0];
+    //     this.setSongImg(songs.al.picUrl);
+    //     console.log(songs.al.picUrl); //dt是总时长
+    //     const time = songs.dt / 1000;
+    //     this.setLastTime(time);
+    //   });
+    // },
     onPercentChange(percent) {
       const currentNew = this.lastTime * percent;
       this.$refs.audio.currentTime = currentNew;

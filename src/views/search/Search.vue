@@ -16,17 +16,18 @@
         <div class="search-history" v-show="searchHistory.length">
           <h1 class="title">
             <span class="text">搜索历史</span>
-            <span class="clear">
+            <span class="clear" @click="showConfirm">
               <i class="iconfont icondelate2"></i>
             </span>
           </h1>
-          <search-list :searches="searchHistory"></search-list>
+          <search-list @select="addQuery" @delete="deleteSearchHistory" :searches="searchHistory"></search-list>
         </div>
       </div>
     </div>
     <scroll class="scroll" v-show="query">
       <suggest @select="saveSearch" :query="query"></suggest>
     </scroll>
+    <confirm ref="confirm" @confirm="clearSearchHistory" :text="textContent" :confirmBtnText="confirmText"></confirm>
     <router-view></router-view>
   </div>
 </template>
@@ -36,6 +37,7 @@ import SearchBox from "components/content/search-box/SearchBox";
 import Suggest from "components/content/suggest/Suggest"
 import Scroll from "components/common/scroll/Scroll";
 import SearchList from "components/content/search-list/SearchList"
+import Confirm from "components/common/confirm/Confirm"
 import { getSearch, getHot } from "network/search";
 import {mapActions, mapGetters} from 'vuex'
 export default {
@@ -43,14 +45,17 @@ export default {
     SearchBox,
     Suggest,
     Scroll,
-    SearchList
+    SearchList,
+    Confirm
     // 搜索歌曲、歌手
   },
   data() {
     return {
       placeholder: "搜索歌曲、歌手",
       hotKey: [],
-      query:''
+      query:'',
+      textContent:'是否清空所有搜索历史',
+      confirmText:"清空"
     };
   },
   created() {
@@ -65,6 +70,9 @@ export default {
         this.hotKey = res.data;
       });
     },
+    showConfirm(){
+      this.$refs.confirm.show()
+    },
     addQuery(query){
       this.$refs.searchBox.setQuery(query)
     },
@@ -75,7 +83,9 @@ export default {
       this.saveSearchHistory(this.query)
     },
     ...mapActions([
-      'saveSearchHistory'
+      'saveSearchHistory',
+      'deleteSearchHistory',
+      'clearSearchHistory'
     ])
     // getSearch() {
     //   getSearch().then((res) => {
