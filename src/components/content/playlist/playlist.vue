@@ -6,10 +6,10 @@
           <h1 class="title">
             <i class="icon"></i>
             <span class="text"></span>
-            <span class="clear"><i class="iconfont icondelate2"></i></span>
+            <span class="clear" @click="showConfirm"><i class="iconfont icondelate2"></i></span>
           </h1>
         </div>
-        <div ref="listContent" class="list-content">
+        <scroll ref="listContent" class="list-content">
           <ul name="list">
             <li
               class="item"
@@ -22,12 +22,12 @@
               <span class="like">
                 <i class="iconfont iconiconhomecollection_"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="iconfont icondelate"></i>
               </span>
             </li>
           </ul>
-        </div>
+        </scroll>
         <div class="list-operate">
           <div class="add">
             <i class="icon-add"></i>
@@ -38,15 +38,27 @@
           <span>关闭</span>
         </div>
       </div>
+      <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
     </div>
   </transition>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
+import Scroll from "components/common/scroll/Scroll";
+import Confirm from "components/common/confirm/Confirm"
 import { playMode } from "assets/js/config";
-import { getMusic,getSongDetail } from "network/player";
+import { getMusic, getSongDetail } from "network/player";
 export default {
+  components: {
+    Scroll,
+    Confirm
+  },
+  mounted() {
+    setTimeout(() => {
+      this.$refs.listContent.refresh();
+    }, 20);
+  },
   data() {
     return {
       showFlag: false,
@@ -66,11 +78,27 @@ export default {
       return "";
     },
     selectItem(item, index) {
-      // console.log('xx');
-      // console.log(item);
       this.setCurrentIndex(index);
       this.setPlayingState(true);
+      this._getUrl(item);
+    },
+    showConfirm(){
+      this.$refs.confirm.show()
+    },
+    confirmClear(){
+      this.deleteSongList()
+      let item = ''
+      this._getUrl(item)
 
+    },
+    deleteOne(item) {
+      this.deleteSong(item);
+      this._getUrl(this.currentSong)
+      if(!this.playlist.length){
+        this.hide()
+      }
+    },
+    _getUrl(item) {
       getMusic(item.id).then((res) => {
         console.log(res);
         this.setMusicUrl(res.data[0].url);
@@ -89,8 +117,8 @@ export default {
       setMusicUrl: "SET_MUSIC_URL",
       setSongImg: "SET_SONG_IMG",
       setLastTime: "SET_LAST_TIME",
-
     }),
+    ...mapActions(["deleteSong","deleteSongList"]),
   },
   computed: {
     ...mapGetters(["sequenceList", "currentSong", "playlist"]),
@@ -125,7 +153,7 @@ div {
     left: 0;
     bottom: 0;
     width: 100%;
-    background-color: gray;
+    background-color: rgb(204, 177, 177);
   }
   .list-header {
     position: relative;
@@ -204,7 +232,7 @@ div {
   .list-close {
     text-align: center;
     line-height: 50px;
-    background-color: rgb(11, 148, 82);
+    background-color: black;
     font-size: 14px;
     color: white;
   }

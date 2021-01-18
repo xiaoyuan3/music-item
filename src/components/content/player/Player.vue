@@ -351,16 +351,6 @@ export default {
         this.setLastTime(time);
       });
     },
-    // getSongDetail() {
-    //   // console.log(this.currentSong);
-    //   getSongDetail(this.currentSong.id).then((res) => {
-    //     const songs = res.songs[0];
-    //     this.setSongImg(songs.al.picUrl);
-    //     console.log(songs.al.picUrl); //dt是总时长
-    //     const time = songs.dt / 1000;
-    //     this.setLastTime(time);
-    //   });
-    // },
     onPercentChange(percent) {
       const currentNew = this.lastTime * percent;
       this.$refs.audio.currentTime = currentNew;
