@@ -40,7 +40,9 @@ import SearchList from "components/content/search-list/SearchList"
 import Confirm from "components/common/confirm/Confirm"
 import { getSearch, getHot } from "network/search";
 import {mapActions, mapGetters} from 'vuex'
+import {searchMixin} from 'assets/js/mixin'
 export default {
+  mixins:[searchMixin],
   components: {
     SearchBox,
     Suggest,
@@ -53,7 +55,6 @@ export default {
     return {
       placeholder: "搜索歌曲、歌手",
       hotKey: [],
-      query:'',
       textContent:'是否清空所有搜索历史',
       confirmText:"清空"
     };
@@ -73,32 +74,13 @@ export default {
     showConfirm(){
       this.$refs.confirm.show()
     },
-    addQuery(query){
-      this.$refs.searchBox.setQuery(query)
-    },
-    onQueryChange(query){
-      this.query = query
-    },
-    saveSearch() {
-      this.saveSearchHistory(this.query)
-    },
     ...mapActions([
       'saveSearchHistory',
       'deleteSearchHistory',
       'clearSearchHistory'
     ])
-    // getSearch() {
-    //   getSearch().then((res) => {
-    //     console.log(res);
-    //   });
-    // },
   },
-  computed:{
-    ...mapGetters([
-      'searchHistory'
-    ])
-  }
-};
+}
 </script>
 
 <style lang="less" scoped>

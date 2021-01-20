@@ -47,6 +47,9 @@ const mutations = {
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index
   },
+  [types.SET_PLAY_HISTORY](state, history) {
+    state.playHistory = history
+  },
 }
 
 export default mutations

@@ -17,9 +17,9 @@
 
 <script>
 import { getSearch } from "network/search";
-import { getMusic,getSongDetail } from "network/player";
+import { getMusic, getSongDetail } from "network/player";
 import Scroll from "components/common/scroll/Scroll";
-import { mapMutations, mapActions,mapGetters } from "vuex";
+import { mapMutations, mapActions, mapGetters } from "vuex";
 export default {
   components: {
     Scroll,
@@ -40,6 +40,9 @@ export default {
   },
   methods: {
     search() {
+      if (this.query === "") {
+        return;
+      }
       getSearch(this.query).then((res) => {
         console.log(res);
         this.result = res.result.songs;
@@ -47,7 +50,10 @@ export default {
     },
     selectItem(item) {
       // console.log(item);
-      this.insertSong(item)
+      this.insertSong(item);
+      if (this.query === "") {
+        return;
+      }
       getMusic(item.id).then((res) => {
         // console.log(res);
         this.setMusicUrl(res.data[0].url);
@@ -58,24 +64,21 @@ export default {
         const time = songs.dt / 1000;
         this.setLastTime(time);
       });
-
-      this.$emit('select')
+      this.$emit("select");
     },
     ...mapMutations({
       setMusicUrl: "SET_MUSIC_URL",
       setSongImg: "SET_SONG_IMG",
       setLastTime: "SET_LAST_TIME",
     }),
-    ...mapActions([
-      'insertSong'
-    ])
+    ...mapActions(["insertSong"]),
     // _normalizeSongs(list){
     //   list.forEach(e => {
     //   });
     // }
   },
-  computed:{
-     ...mapGetters(["currentSong"]),
+  computed: {
+    ...mapGetters(["currentSong"]),
   },
   watch: {
     query() {

@@ -141,7 +141,7 @@ import Scroll from "components/common/scroll/Scroll";
 import PlayList from "../playlist/playlist";
 import Lyric from "lyric-parser";
 
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations,mapActions } from "vuex";
 import { prefixStyle } from "assets/js/dom";
 import { getMusic, getSongDetail, getSongWords } from "network/player";
 import { playMode } from "assets/js/config";
@@ -322,6 +322,7 @@ export default {
     },
     ready() {
       this.songReady = true;
+      this.savePlayHistory(this.currentSong)
     },
     error() {
       this.songReady = true;
@@ -474,6 +475,9 @@ export default {
       this.$refs.centerL.style[transitionDuration] = 300;
       this.touch.initiated = false;
     },
+    ...mapActions([
+      'savePlayHistory'
+    ])
   },
   computed: {
     ...mapGetters([

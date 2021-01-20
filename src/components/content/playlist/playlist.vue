@@ -29,7 +29,7 @@
           </ul>
         </scroll>
         <div class="list-operate">
-          <div class="add">
+          <div class="add"  @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
@@ -39,20 +39,23 @@
         </div>
       </div>
       <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
+      <add-song ref="addSong"></add-song>
     </div>
   </transition>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex";
 import Scroll from "components/common/scroll/Scroll";
 import Confirm from "components/common/confirm/Confirm"
+import AddSong from "components/content/add-song/add-song"
 import { playMode } from "assets/js/config";
 import { getMusic, getSongDetail } from "network/player";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   components: {
     Scroll,
-    Confirm
+    Confirm,
+    AddSong
   },
   mounted() {
     setTimeout(() => {
@@ -110,6 +113,9 @@ export default {
         const time = songs.dt / 1000;
         this.setLastTime(time);
       });
+    },
+    addSong(){
+      this.$refs.addSong.show()
     },
     ...mapMutations({
       setCurrentIndex: "SET_CURRENT_INDEX",
