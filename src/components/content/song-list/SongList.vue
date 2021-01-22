@@ -34,7 +34,7 @@ export default {
   },
   methods:{
     selectItem(item, index){
-      console.log('xx');
+      console.log(item.name);
       this.$emit('select', item, index)
     }
   },
