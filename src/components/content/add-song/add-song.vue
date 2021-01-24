@@ -8,7 +8,11 @@
         </div>
       </div>
       <div class="search-box-wrapper">
-        <search-box @query="search" placeholder="搜索歌曲"></search-box>
+        <search-box
+          ref="searchBox"
+          @query="search"
+          placeholder="搜索歌曲"
+        ></search-box>
       </div>
       <div class="shortcut">
         <switches
@@ -17,16 +21,23 @@
           @switch="switchItem"
         ></switches>
         <div class="list-wrapper">
-          <scroll
-            class="list-scroll"
-            v-if="currentIndex === 0"
-          >
+          <scroll class="scroll" ref="scroll" v-if="currentIndex === 0">
             <div class="list-inner">
               <song-list
                 class="song-list"
                 @select="selectSong"
                 :list="playHistory"
               ></song-list>
+            </div>
+          </scroll>
+          <scroll class="scroll" ref="scroll" v-if="currentIndex === 1">
+            <div class="list-inner">
+              <search-list
+                class="search-list"
+                @delete="deleteSearchHistory"
+                @select="addQuery"
+                :searches="searchHistory"
+              ></search-list>
             </div>
           </scroll>
         </div>
@@ -44,6 +55,7 @@ import Suggest from "components/content/suggest/Suggest";
 import Switches from "../switches/switches";
 import Scroll from "components/common/scroll/Scroll";
 import SongList from "../song-list/SongList";
+import SearchList from "../search-list/SearchList";
 import { searchMixin } from "assets/js/mixin";
 import { getMusic, getSongDetail } from "network/player";
 import { mapGetters, mapActions, mapMutations } from "vuex";
@@ -55,6 +67,7 @@ export default {
     Switches,
     Scroll,
     SongList,
+    SearchList,
   },
   data() {
     return {
@@ -67,9 +80,13 @@ export default {
   computed: {
     ...mapGetters(["playHistory"]),
   },
+  mounted() {},
   methods: {
     show() {
       this.showFlag = true;
+      setTimeout(() => {
+        this.$refs.scroll.refresh();
+      }, 50);
     },
     hide() {
       this.showFlag = false;
@@ -84,7 +101,8 @@ export default {
       this.currentIndex = index;
     },
     selectSong(item, index) {
-      console.log(this.currentIndex);
+      // console.log(this.currentIndex);
+      this.insertSong(item);
       if (index !== 0) {
         getMusic(item.id).then((res) => {
           this.setMusicUrl(res.data[0].url);
@@ -99,7 +117,7 @@ export default {
         this.setPlayingState(true);
       }
     },
-    ...mapActions(["insertSong",'currentIndex']),
+    ...mapActions(["insertSong"]),
     ...mapMutations({
       setMusicUrl: "SET_MUSIC_URL",
       setSongImg: "SET_SONG_IMG",
@@ -107,6 +125,9 @@ export default {
       setPlayingState: "SET_PLAYING_STATE",
       setCurrentIndex: "SET_CURRENT_INDEX",
     }),
+  },
+  computed: {
+    ...mapGetters(["playHistory"]),
   },
 };
 </script>
@@ -152,11 +173,11 @@ export default {
       top: 165px;
       bottom: 0;
       width: 100%;
-      color: white;
-      .list-scroll {
+      .scroll {
         position: absolute;
         top: 0;
         height: 100%;
+        width: 100%;
         overflow: hidden;
         .list-inner {
           padding: 20px 35px;
@@ -172,6 +193,7 @@ export default {
     top: 124px;
     bottom: 0;
     width: 100%;
+    background-color: gray;
   }
 }
 </style>

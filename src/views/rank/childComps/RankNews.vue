@@ -48,7 +48,7 @@ export default {
     console.log(this.songList1);
     setTimeout(() => {
       this.$refs.toplist.refresh()
-    }, 20);
+    }, 50);
   },
   methods:{
     select(item){

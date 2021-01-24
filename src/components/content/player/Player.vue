@@ -173,7 +173,7 @@ export default {
   mounted(){
     setTimeout(() => {
       this.$refs.lyricList.refresh()
-    }, 20);
+    }, 50);
   },
   methods: {
     ...mapMutations({

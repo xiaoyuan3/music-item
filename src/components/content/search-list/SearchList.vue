@@ -50,7 +50,6 @@ ul{
     .text{
       flex: 1;
     }
-
   }
 }
 </style>

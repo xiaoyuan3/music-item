@@ -6,7 +6,9 @@
           <h1 class="title">
             <i class="icon"></i>
             <span class="text"></span>
-            <span class="clear" @click="showConfirm"><i class="iconfont icondelate2"></i></span>
+            <span class="clear" @click="showConfirm"
+              ><i class="iconfont icondelate2"></i
+            ></span>
           </h1>
         </div>
         <scroll ref="listContent" class="list-content">
@@ -29,7 +31,7 @@
           </ul>
         </scroll>
         <div class="list-operate">
-          <div class="add"  @click="addSong">
+          <div class="add" @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
@@ -38,7 +40,12 @@
           <span>关闭</span>
         </div>
       </div>
-      <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
+      <confirm
+        ref="confirm"
+        @confirm="confirmClear"
+        text="是否清空播放列表"
+        confirmBtnText="清空"
+      ></confirm>
       <add-song ref="addSong"></add-song>
     </div>
   </transition>
@@ -46,8 +53,8 @@
 
 <script>
 import Scroll from "components/common/scroll/Scroll";
-import Confirm from "components/common/confirm/Confirm"
-import AddSong from "components/content/add-song/add-song"
+import Confirm from "components/common/confirm/Confirm";
+import AddSong from "components/content/add-song/add-song";
 import { playMode } from "assets/js/config";
 import { getMusic, getSongDetail } from "network/player";
 import { mapGetters, mapMutations, mapActions } from "vuex";
@@ -55,12 +62,12 @@ export default {
   components: {
     Scroll,
     Confirm,
-    AddSong
+    AddSong,
   },
   mounted() {
     setTimeout(() => {
       this.$refs.listContent.refresh();
-    }, 20);
+    }, 50);
   },
   data() {
     return {
@@ -70,6 +77,7 @@ export default {
   methods: {
     show() {
       this.showFlag = true;
+      
     },
     hide() {
       this.showFlag = false;
@@ -85,20 +93,19 @@ export default {
       this.setPlayingState(true);
       this._getUrl(item);
     },
-    showConfirm(){
-      this.$refs.confirm.show()
+    showConfirm() {
+      this.$refs.confirm.show();
     },
-    confirmClear(){
-      this.deleteSongList()
-      let item = ''
-      this._getUrl(item)
-
+    confirmClear() {
+      this.deleteSongList();
+      let item = "";
+      this._getUrl(item);
     },
     deleteOne(item) {
       this.deleteSong(item);
-      this._getUrl(this.currentSong)
-      if(!this.playlist.length){
-        this.hide()
+      this._getUrl(this.currentSong);
+      if (!this.playlist.length) {
+        this.hide();
       }
     },
     _getUrl(item) {
@@ -114,8 +121,8 @@ export default {
         this.setLastTime(time);
       });
     },
-    addSong(){
-      this.$refs.addSong.show()
+    addSong() {
+      this.$refs.addSong.show();
     },
     ...mapMutations({
       setCurrentIndex: "SET_CURRENT_INDEX",
@@ -124,7 +131,7 @@ export default {
       setSongImg: "SET_SONG_IMG",
       setLastTime: "SET_LAST_TIME",
     }),
-    ...mapActions(["deleteSong","deleteSongList"]),
+    ...mapActions(["deleteSong", "deleteSongList"]),
   },
   computed: {
     ...mapGetters(["sequenceList", "currentSong", "playlist"]),
